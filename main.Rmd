@@ -1,0 +1,31 @@
+---
+title: "Final Project"
+subtitle: "CFRM 462 - Introduction to Computational Finance and Financial Econometrics"
+author: "Rukmal Weerawarana"
+date: "August 19, 2016"
+
+documentclass: report
+
+output:
+    pdf_document:
+        toc: true
+        number_sections: true
+        includes:
+            in_header: header.tex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, tidy.opts=list(width.cutoff=70), warning = FALSE, message = FALSE)
+options(digits = 6)
+```
+
+# Executive Summary
+
+## Dataset Description
+
+### VFINX - S&P 500 Index
+### VERUX - European Stock Index
+### VEIEX - Emerging Markets Fund
+### VBLTX - Long-Term Bond Fund
+### VBISX - Short-Term Bond Fund
+### VPACX - Pacific Stock Index
