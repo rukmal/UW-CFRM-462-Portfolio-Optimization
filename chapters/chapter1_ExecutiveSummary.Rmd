@@ -1,0 +1,67 @@
+---
+output: pdf_document
+---
+
+
+# Executive Summary
+
+## Dataset Description
+
+```{r download_price_data}
+# Defining date range
+start.date <- "2011-06-01"
+end.date <- "2016-06-30"
+
+# Getting adjusted close prices for each of the securities
+vfinx.adjclose <- get.adjclose("VFINX", "m", start.date, end.date)
+veurx.adjclose <- get.adjclose("VEURX", "m", start.date, end.date)
+veiex.adjclose <- get.adjclose("VEIEX", "m", start.date, end.date)
+vbltx.adjclose <- get.adjclose("VBLTX", "m", start.date, end.date)
+vbisx.adjclose <- get.adjclose("VBISX", "m", start.date, end.date)
+vpacx.adjclose <- get.adjclose("VPACX", "m", start.date, end.date)
+
+# Changing class of index to yearmon, which is ideal for monthly data
+index(vfinx.adjclose) <- as.yearmon(index(vfinx.adjclose))
+index(veurx.adjclose) <- as.yearmon(index(veurx.adjclose))
+index(veiex.adjclose) <- as.yearmon(index(veiex.adjclose))
+index(vbltx.adjclose) <- as.yearmon(index(vbltx.adjclose))
+index(vbisx.adjclose) <- as.yearmon(index(vbisx.adjclose))
+index(vpacx.adjclose) <- as.yearmon(index(vpacx.adjclose))
+
+# Merging price data
+prices <- merge(vfinx.adjclose, veurx.adjclose, veiex.adjclose, vbltx.adjclose, vbisx.adjclose, vpacx.adjclose)
+colnames(prices) <- asset.names
+
+# Computing continuously compounded returns, and casting to different types
+# for function compatibility
+ret.z <- diff(log(prices))  # Type 'zoo'
+ret.mat <- coredata(ret.z)  # Type 'matrix'
+ret.df <- as.data.frame(coredata(ret.z))  # Type 'dataframe'
+
+# Computing simple returns
+ret.simple.z <- exp(ret.z) - 1
+
+# Check if output Excel file exists, if so delete
+if (file.exists(export.pricedata.name)) {
+	file.remove(export.pricedata.name)
+}
+
+# Loop through each asset, and export price, simple and geometric return
+# to separate sheets in an Excel file
+for (i in seq_along(asset.names)) {
+	simple.ret = exp(ret.df[,i]) - 1
+	export.data.names <- c("Adjusted Close", "Simple Return", "Continuously Compounded Return")
+	export.data = data.frame(prices[,i][-(1:1)], simple.ret, ret.df[,i])
+	rownames(export.data) <- index(prices)[-(1:1)]
+	colnames(export.data) <- export.data.names
+	write.xlsx(export.data, file = export.pricedata.name, sheetName = asset.names[i], append = TRUE)
+}
+
+```
+
+### VFINX - S&P 500 Index
+### VEURX - European Stock Index
+### VEIEX - Emerging Markets Fund
+### VBLTX - Long-Term Bond Fund
+### VBISX - Short-Term Bond Fund
+### VPACX - Pacific Stock Index

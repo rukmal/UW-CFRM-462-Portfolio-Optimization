@@ -15,17 +15,34 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, tidy.opts=list(width.cutoff=70), warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = FALSE, tidy = TRUE, tidy.opts=list(width.cutoff=70), warning = FALSE, message = FALSE)
 options(digits = 6)
 ```
 
-# Executive Summary
+```{r init}
+library(boot)
+library(IntroCompFinR)
+library(knitr)
+library(PerformanceAnalytics)
+library(tseries)
+library(xlsx)
 
-## Dataset Description
+# Constants
+asset.names <- c("VFINX", "VEURX", "VEIEX", "VBLTX", "VBISX", "VPACX")
+export.pricedata.name <- "price_data.xlsx"
+```
 
-### VFINX - S&P 500 Index
-### VERUX - European Stock Index
-### VEIEX - Emerging Markets Fund
-### VBLTX - Long-Term Bond Fund
-### VBISX - Short-Term Bond Fund
-### VPACX - Pacific Stock Index
+```{r helpers}
+# Function to get adjusted close prices from online services
+# See ??get.hist.quote for more info/options
+get.adjclose <- function (instrument, interval, start = "1800-01-01", end = Sys.date()) {
+	prices <- get.hist.quote(instrument = instrument, quote = c("AdjClose"), start = start, end = end, compression = interval, retclass = "zoo")
+	prices
+}
+```
+
+```{r child = "chapters/chapter1_ExecutiveSummary.Rmd", include = FALSE}
+```
+
+```{r child = "chapters/appendix.Rmd"}
+```
