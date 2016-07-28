@@ -60,6 +60,9 @@ for (i in seq_along(asset.names)) {
 ```
 
 ### VFINX - S&P 500 Index
+
+TEstings ^[@TheVanguardGroup2016]
+
 ### VEURX - European Stock Index
 ### VEIEX - Emerging Markets Fund
 ### VBLTX - Long-Term Bond Fund

@@ -6,9 +6,13 @@ output: pdf_document
 
 # Project Source Code
 
-## Initialization and Helper Functions
+## Initialization and Constants
 
 ```{r ref.label = "init", eval = FALSE, echo = TRUE}
+```
+
+## Helper Functions
+```{r ref.label = "helpers", eval = FALSE, echo = TRUE}
 ```
 
 ## Downloading and Exporting Price Data

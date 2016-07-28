@@ -3,9 +3,9 @@ title: "Final Project"
 subtitle: "CFRM 462 - Introduction to Computational Finance and Financial Econometrics"
 author: "Rukmal Weerawarana"
 date: "August 19, 2016"
-
+bibliography: bibliography.bib
+csl: apa.csl
 documentclass: report
-
 output:
     pdf_document:
         toc: true
@@ -46,3 +46,6 @@ get.adjclose <- function (instrument, interval, start = "1800-01-01", end = Sys.
 
 ```{r child = "chapters/appendix.Rmd"}
 ```
+
+
+# References
