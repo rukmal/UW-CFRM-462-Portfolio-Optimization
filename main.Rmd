@@ -54,6 +54,7 @@ get.adjclose <- function (instrument, interval, start = "1800-01-01", end = Sys.
 
 ```{r child = "chapters/chapter1_Introduction.Rmd", include = FALSE}
 ```
+\newpage
 
 ```{r child = "chapters/appendix.Rmd"}
 ```

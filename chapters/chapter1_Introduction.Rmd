@@ -61,10 +61,16 @@ for (i in seq_along(asset.names)) {
 
 ### VFINX - S&P 500 Index
 
-TEstings ^[@TheVanguardGroup2016]
+The Vanguard 500 Index Fund ^[@VFINXTheVanguardGroup2016] is an ETF that invests in 500 of the largest U.S. companies. These companies span many different industries, and thus provides investors with full exposure to the domestic stock market. The fund focuses on large-capitalization companies that encompass nearly 75% of the U.S. equity market. The fund treats the Standard & Poor's 500 ^[@SP500SPDowJones2016] as its benchmark, and thus acts as a measurement of overall stock market performance.
 
 ### VEURX - European Stock Index
+
+The Vanguard European Stock Index Fund ^[@VEURXTheVanguardGroup2016] is an ETF that provides investors with exposure to the major stock markets of Europe. The fund holds positions in approximately 1,200 stocks across European markets, which represents nearly half of global (non U.S.) equity. In addition to systematic risk, this fund is also exposed to currency risk, and may have significant regional risk as all markets in which the fund invests in are located in Europe. This fund treated the MSCI Europe Index ^[@EuropeIndexMSCI2016] as its benchmark through March 26, 2013, but has used the FTSE Developed Europe Index ^[@DevelopedEuropeIndexFTSE2016] as its benchmark thereafter.
+
 ### VEIEX - Emerging Markets Fund
+
+The Vanguard Emerging Markets Stock Index Fund ^[@VEIEXTheVanguardGroup2016] is an ETF that provides investors with exposure to emerging markets around the world including but not limited to: Brazil, Russia, India and China. As emerging markets tend to be more volatile, this fund has the potential for higher returns, but with considerably higher risk. Similar to the European Stock Index Fund, the returns of this fund too are exposed to significant currency risk. This fund treated the FTSE Emerging Index ^[@EmergingIndexFTSE2016] as its benchmark through November 2, 2015, but has since switched to the FTSE Emerging Markets All Cap China A Transition Index. ^[@EmergingAllCapIndexFTSE2016]
+
 ### VBLTX - Long-Term Bond Fund
 ### VBISX - Short-Term Bond Fund
 ### VPACX - Pacific Stock Index
