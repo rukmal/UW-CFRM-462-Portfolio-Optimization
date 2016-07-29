@@ -19,14 +19,14 @@ knitr::opts_chunk$set(echo = FALSE, tidy = TRUE, tidy.opts=list(width.cutoff=70)
 options(digits = 6)
 ```
 
-```{r child = "chapters/TitlePage.tex"}
+```{r child = "report_resources/1_Title_Page.tex"}
 ```
 \newpage
 
 \pagenumbering{roman}
 
 \addcontentsline{toc}{section}{Executive Summary}
-```{r child = "chapters/ExecutiveSummary.Rmd"}
+```{r child = "report_resources/2_Executive_Summary.Rmd"}
 ```
 
 \newpage
@@ -57,11 +57,11 @@ get.adjclose <- function (instrument, interval, start = "1800-01-01", end = Sys.
 }
 ```
 
-```{r child = "chapters/chapter1_Introduction.Rmd", include = FALSE}
+```{r child = "chapters/1_Introduction.Rmd", include = FALSE}
 ```
 \newpage
 
-```{r child = "chapters/appendix.Rmd"}
+```{r child = "report_resources/3_Appendix.Rmd"}
 ```
 
 
