@@ -64,5 +64,10 @@ get.adjclose <- function (instrument, interval, start = "1800-01-01", end = Sys.
 ```{r child = "report_resources/3_Appendix.Rmd"}
 ```
 
+---
+nocite: |
+    @IntroCompFinAndFinEconometrics:EricZivot:2016
+---
+
 
 # References
