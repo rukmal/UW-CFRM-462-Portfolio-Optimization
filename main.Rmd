@@ -8,7 +8,6 @@ csl: apa.csl
 documentclass: report
 output:
     pdf_document:
-        toc: true
         number_sections: true
         includes:
             in_header: header.tex
@@ -18,6 +17,18 @@ output:
 knitr::opts_chunk$set(echo = FALSE, tidy = TRUE, tidy.opts=list(width.cutoff=70), warning = FALSE, message = FALSE)
 options(digits = 6)
 ```
+
+\pagenumbering{roman}
+
+\addcontentsline{toc}{section}{Executive Summary}
+```{r child = "chapters/ExecutiveSummary.Rmd"}
+```
+
+\newpage
+\tableofcontents
+
+\newpage
+\pagenumbering{arabic}
 
 ```{r init}
 library(boot)
@@ -41,7 +52,7 @@ get.adjclose <- function (instrument, interval, start = "1800-01-01", end = Sys.
 }
 ```
 
-```{r child = "chapters/chapter1_ExecutiveSummary.Rmd", include = FALSE}
+```{r child = "chapters/chapter1_Introduction.Rmd", include = FALSE}
 ```
 
 ```{r child = "chapters/appendix.Rmd"}
