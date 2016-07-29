@@ -1,8 +1,9 @@
 ---
-title: "Final Project"
-subtitle: "CFRM 462 - Introduction to Computational Finance and Financial Econometrics"
-author: "Rukmal Weerawarana"
-date: "August 19, 2016"
+# Author: Rukmal Weerawarana
+# University of Washington
+# CFRM 462 - Introduction to Computational Finance and Financial Econometrics
+# Final Project - 401k Portfolio Optimization
+
 bibliography: bibliography.bib
 csl: apa.csl
 documentclass: report
@@ -17,6 +18,10 @@ output:
 knitr::opts_chunk$set(echo = FALSE, tidy = TRUE, tidy.opts=list(width.cutoff=70), warning = FALSE, message = FALSE)
 options(digits = 6)
 ```
+
+```{r child = "chapters/TitlePage.tex"}
+```
+\newpage
 
 \pagenumbering{roman}
 
