@@ -59,18 +59,26 @@ for (i in seq_along(asset.names)) {
 
 ```
 
-### VFINX - S&P 500 Index
+### VFINX - S&P 500 Index Fund
 
-The Vanguard 500 Index Fund ^[@VFINXTheVanguardGroup2016] is an ETF that invests in 500 of the largest U.S. companies. These companies span many different industries, and thus provides investors with full exposure to the domestic stock market. The fund focuses on large-capitalization companies that encompass nearly 75% of the U.S. equity market. The fund treats the Standard & Poor's 500 ^[@SP500SPDowJones2016] as its benchmark, and thus acts as a measurement of overall stock market performance.
+The Vanguard 500 Index Fund ^[@VFINX:TheVanguardGroup:2016] (VFINX) is an ETF that invests in 500 of the largest U.S. companies. These companies span many different industries, and thus provides investors with full exposure to the domestic stock market. The fund focuses on large-capitalization companies that encompass nearly 75% of the U.S. equity market. The fund treats the Standard & Poor's 500 ^[@SP500:SPDowJones:2016] as its benchmark, and thus acts as a measurement of overall stock market performance.
 
-### VEURX - European Stock Index
+### VEURX - European Stock Index Fund
 
-The Vanguard European Stock Index Fund ^[@VEURXTheVanguardGroup2016] is an ETF that provides investors with exposure to the major stock markets of Europe. The fund holds positions in approximately 1,200 stocks across European markets, which represents nearly half of global (non U.S.) equity. In addition to systematic risk, this fund is also exposed to currency risk, and may have significant regional risk as all markets in which the fund invests in are located in Europe. This fund treated the MSCI Europe Index ^[@EuropeIndexMSCI2016] as its benchmark through March 26, 2013, but has used the FTSE Developed Europe Index ^[@DevelopedEuropeIndexFTSE2016] as its benchmark thereafter.
+The Vanguard European Stock Index Fund ^[@VEURX:TheVanguardGroup:2016] (VEURX) is an ETF that provides investors with exposure to the major stock markets of Europe. The fund holds positions in approximately 1,200 securities across European markets, which represents nearly half of global (non U.S.) equity. In addition to systematic risk, this fund is also exposed to currency risk, and may have significant regional risk as all markets in which the fund invests in are located in Europe. This fund treated the MSCI Europe Index ^[@EuropeIndex:MSCI:2016] as its benchmark through March 26, 2013, but has used the FTSE Developed Europe Index ^[@DevelopedEuropeIndex:FTSE:2016] as its benchmark thereafter.
 
-### VEIEX - Emerging Markets Fund
+### VEIEX - Emerging Markets Index Fund
 
-The Vanguard Emerging Markets Stock Index Fund ^[@VEIEXTheVanguardGroup2016] is an ETF that provides investors with exposure to emerging markets around the world including but not limited to: Brazil, Russia, India and China. As emerging markets tend to be more volatile, this fund has the potential for higher returns, but with considerably higher risk. Similar to the European Stock Index Fund, the returns of this fund too are exposed to significant currency risk. This fund treated the FTSE Emerging Index ^[@EmergingIndexFTSE2016] as its benchmark through November 2, 2015, but has since switched to the FTSE Emerging Markets All Cap China A Transition Index. ^[@EmergingAllCapIndexFTSE2016]
+The Vanguard Emerging Markets Stock Index Fund ^[@VEIEX:TheVanguardGroup:2016] (VEIEX) is an ETF that provides investors with exposure to emerging markets around the world including but not limited to: Brazil, Russia, India and China. As emerging markets tend to be more volatile, this fund has the potential for higher returns, but with considerably higher risk. Similar to the European Stock Index Fund, the returns of this fund too are exposed to significant currency risk. This fund treated the FTSE Emerging Index ^[@EmergingIndex:FTSE:2016] as its benchmark through November 2, 2015, but has since switched to the FTSE Emerging Markets All Cap China A Transition Index. ^[@EmergingAllCapIndex:FTSE:2016]
 
-### VBLTX - Long-Term Bond Fund
-### VBISX - Short-Term Bond Fund
-### VPACX - Pacific Stock Index
+### VBLTX - Long-Term Bond Index Fund
+
+The Vanguard Long-Term Bond Index Fund ^[@VBLTX:TheVanguardGroup:2016] (VBLTX) is an ETF that provides investors with exposure to long-term bond investments. This fund holds positions in both corporate and U.S. Government bonds with a maturity of 10 years or more. However, due to the fact that long-term bonds are highly exposed to price fluctuations caused by changing interest rate, which is attributable to the high duration and convexity of the underlying long-term bonds. This fund used the Barclays U.S. Long Government Float Adjusted Index ^[@LongGovernmentIndex:BarclaysBankPLC:2015] as its bechmark through December 31, 2009, but has since swithced to the Barclays U.S. Long Government/Credit Float Adjusted Index. ^[@LongGovernmentCreditIndex:BarclaysBankPLC:2015]
+
+### VBISX - Short-Term Bond Index Fund
+
+The Vanguard Short-Term Bond Index Fund ^[@VBISX:TheVanguardGroup:2016] (VBISX) is an ETF that provides investors with exposure to a diversified portoflio of short-term bonds. This fund holds positions in both corporate and U.S. Government short-term bonds with maturities of 1 to 5 years. Due to the fact that short-term bonds have low duration and convexity, investors can expect minimal price movement with relation to interest rates from this fund, and thus lower yield. This fund uses the Barclays U.S. Government/Credit Float Adjusted 1-5 Year Index ^[@1to5YearGovernmentCreditIndex:BarclaysBankPLC:2015] as its benchmark.
+
+### VPACX - Pacific Stock Index Fund
+
+The Vanguard Pacific Stock Index Fund ^[@VPACX:TheVanguardGroup:2016] (VPACX) is an ETF that provides investors with exposure to a diversified portfolio of securities in markets of developed nations in the Pacific region. The fund holds positions in over 2,000 securities across the Pacific, with the bulk of them being located in Japan. This investment pool represents approximately a quarter of the global (non U.S.) equity market capitalization. The fund initially used the MSCI Pacific Index ^[@PacificIndex:MSCI:2016] as its benchmark until March 26, 2013, before switching to the FTSE Developed Asia Pacific Index ^[@DevelopedAsiaPacificIndex:FTSE:2016] through September 30, 2015, until finally switching to the FTSE Developed Asia Pacific All Cap Index ^[@DevelopedAsiaPacificAllCapIndex:FTSE:2016], which is uses today.
