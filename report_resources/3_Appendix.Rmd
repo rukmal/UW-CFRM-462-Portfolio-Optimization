@@ -2,20 +2,24 @@
 output: pdf_document
 ---
 
+```{r setup_appendix}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE, include = TRUE)
+```
+
 \appendix
 
 # Project Source Code
 
 ## Initialization and Constants
 
-```{r ref.label = "init", eval = FALSE, echo = TRUE}
+```{r ref.label="init"}
 ```
 
 ## Helper Functions
-```{r ref.label = "helpers", eval = FALSE, echo = TRUE}
+```{r ref.label="helpers"}
 ```
 
 ## Downloading and Exporting Price Data
 
-```{r ref.label = "download_price_data", eval = FALSE, echo = TRUE}
+```{r ref.label="download_price_data"}
 ```

@@ -9,6 +9,7 @@ csl: apa.csl
 documentclass: report
 output:
     pdf_document:
+        fig_caption: true
         number_sections: true
         includes:
             in_header: header.tex
@@ -19,14 +20,14 @@ knitr::opts_chunk$set(echo = FALSE, tidy = TRUE, tidy.opts=list(width.cutoff=70)
 options(digits = 6)
 ```
 
-```{r child = "report_resources/1_Title_Page.tex"}
+```{r child="report_resources/1_Title_Page.tex"}
 ```
 \newpage
 
 \pagenumbering{roman}
 
 \addcontentsline{toc}{chapter}{Executive Summary}
-```{r child = "report_resources/2_Executive_Summary.Rmd"}
+```{r child="report_resources/2_Executive_Summary.Rmd"}
 ```
 
 \newpage
@@ -37,18 +38,44 @@ options(digits = 6)
 
 ```{r init}
 library(boot)
+library(captioner)
 library(IntroCompFinR)
 library(knitr)
 library(PerformanceAnalytics)
 library(tseries)
 library(xlsx)
 
+# Captioner setup
+figures <- captioner(prefix = "Figure")
+tables <- captioner(prefix = "Table")
+
 # Constants
 asset.names <- c("VFINX", "VEURX", "VEIEX", "VBLTX", "VBISX", "VPACX")
+asset.colors <- c("lightcyan4", "lightcoral", "lightseagreen", "lightskyblue", "lightsalmon", "lightslateblue")
 export.pricedata.name <- "price_data.xlsx"
 ```
 
 ```{r helpers}
+# Function to add a figure caption to figures object
+figures.add <- function (...) {
+    figures(..., display = FALSE)
+}
+
+# Function to add a table caption to tables object
+tables.add <- function (...) {
+    tables(..., display = FALSE)
+}
+
+# Function to cite a figure
+figures.cite <- function (figure.ref) {
+    figures(figure.ref, display = "cite")
+}
+
+# Function to cite a table
+tables.cite <- function (table.ref) {
+    tables(table.ref, display = "cite")
+}
+
 # Function to get adjusted close prices from online services
 # See ??get.hist.quote for more info/options
 get.adjclose <- function (instrument, interval, start = "1800-01-01", end = Sys.date()) {
@@ -57,11 +84,16 @@ get.adjclose <- function (instrument, interval, start = "1800-01-01", end = Sys.
 }
 ```
 
-```{r child = "chapters/1_Introduction.Rmd", include = FALSE}
+```{r child="chapters/1_Introduction.Rmd"}
 ```
+
+```{r child="chapters/2_Analysis.Rmd"}
+```
+
+
 \newpage
 
-```{r child = "report_resources/3_Appendix.Rmd"}
+```{r child="report_resources/3_Appendix.Rmd"}
 ```
 
 ---

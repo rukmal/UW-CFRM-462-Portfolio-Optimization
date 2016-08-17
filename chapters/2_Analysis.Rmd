@@ -1,0 +1,29 @@
+---
+output: pdf_document
+---
+
+# Analysis
+
+## Fund Returns Analyis
+
+```{r time_plot_price, fig.cap=figures("time_plot_price")}
+panel.price.plot <- function (...) {
+	lines(...)
+	grid()
+}
+
+plot(prices, xlab = "Time", panel = panel.price.plot, col = asset.colors, main = "")
+figures.add(name = "time_plot_price", caption = "Time plot of fund prices")
+```
+
+
+```{r time_plot_returns, fig.cap=figures("time_plot_returns")}
+panel.return.plot <- function (...) {
+	lines(...)
+	grid()
+	abline(h = 0)
+}
+
+plot(ret.z, xlab = "Time", panel = panel.return.plot, col = asset.colors, main = "")
+figures.add(name = "time_plot_returns", caption = "Time plot of fund continuously compounded returns")
+```

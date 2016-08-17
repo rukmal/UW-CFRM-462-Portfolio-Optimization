@@ -7,7 +7,7 @@ output: pdf_document
 
 ## Dataset Description
 
-```{r download_price_data}
+```{r download_price_data, include=FALSE}
 # Defining date range
 start.date <- "2011-06-01"
 end.date <- "2016-06-30"
