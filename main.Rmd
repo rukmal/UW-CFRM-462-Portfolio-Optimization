@@ -41,9 +41,13 @@ library(boot)
 library(captioner)
 library(IntroCompFinR)
 library(knitr)
+library(lubridate)
 library(PerformanceAnalytics)
 library(tseries)
 library(xlsx)
+
+# Plot region setup
+par(mgp = c(0, 0, 0), mar = c(0,0,0,0), mfrow = c(1,1))
 
 # Captioner setup
 figures <- captioner(prefix = "Figure")
@@ -53,6 +57,11 @@ tables <- captioner(prefix = "Table")
 asset.names <- c("VFINX", "VEURX", "VEIEX", "VBLTX", "VBISX", "VPACX")
 asset.colors <- c("lightcyan4", "lightcoral", "lightseagreen", "lightskyblue", "lightsalmon", "lightslateblue")
 export.pricedata.name <- "price_data.xlsx"
+
+# Macroeconomic Events
+dates.macro <- c(decimal_date(ymd("2012-04-15")), decimal_date(ymd("2015-08-21")))
+names(dates.macro) <- c("Europe Credit Crisis", "China Stock Market Crash")
+dates.macro.colors <- c("steelblue3", "violetred2")
 ```
 
 ```{r helpers}

@@ -61,7 +61,7 @@ for (i in seq_along(asset.names)) {
 
 ### VFINX - S&P 500 Index Fund
 
-The Vanguard 500 Index Fund ^[@VFINX:TheVanguardGroup:2016] (VFINX) is an ETF that invests in 500 of the largest U.S. companies. These companies span many different industries, and thus provides investors with full exposure to the domestic stock market. The fund focuses on large-capitalization companies that encompass nearly 75% of the U.S. equity market. The fund treats the Standard & Poor's 500 ^[@SP500:SPDowJones:2016] as its benchmark, and thus acts as a measurement of overall stock market performance.
+The Vanguard 500 Index Fund ^[@VFINX:TheVanguardGroup:2016] (VFINX) is an exchange traded fund (ETF) that invests in 500 of the largest U.S. companies. These companies span many different industries, and thus provides investors with full exposure to the domestic stock market. The fund focuses on large-capitalization companies that encompass nearly 75% of the U.S. equity market. The fund treats the Standard & Poor's 500 ^[@SP500:SPDowJones:2016] as its benchmark, and thus acts as a measurement of overall stock market performance.
 
 ### VEURX - European Stock Index Fund
 
@@ -73,11 +73,11 @@ The Vanguard Emerging Markets Stock Index Fund ^[@VEIEX:TheVanguardGroup:2016] (
 
 ### VBLTX - Long-Term Bond Index Fund
 
-The Vanguard Long-Term Bond Index Fund ^[@VBLTX:TheVanguardGroup:2016] (VBLTX) is an ETF that provides investors with exposure to long-term bond investments. This fund holds positions in both corporate and U.S. Government bonds with a maturity of 10 years or more. However, due to the fact that long-term bonds are highly exposed to price fluctuations caused by changing interest rate, which is attributable to the high duration and convexity of the underlying long-term bonds. This fund used the Barclays U.S. Long Government Float Adjusted Index ^[@LongGovernmentIndex:BarclaysBankPLC:2015] as its bechmark through December 31, 2009, but has since swithced to the Barclays U.S. Long Government/Credit Float Adjusted Index. ^[@LongGovernmentCreditIndex:BarclaysBankPLC:2015]
+The Vanguard Long-Term Bond Index Fund ^[@VBLTX:TheVanguardGroup:2016] (VBLTX) is an ETF that provides investors with exposure to long-term bond (i.e. debt obligation) investments. This fund holds positions in both corporate and U.S. Government bonds with a maturity of 10 years or more. However, due to the fact that long-term bonds are highly exposed to price fluctuations caused by changing interest rate, which is attributable to the high duration and convexity of the underlying long-term bonds. This fund used the Barclays U.S. Long Government Float Adjusted Index ^[@LongGovernmentIndex:BarclaysBankPLC:2015] as its bechmark through December 31, 2009, but has since swithced to the Barclays U.S. Long Government/Credit Float Adjusted Index. ^[@LongGovernmentCreditIndex:BarclaysBankPLC:2015]
 
 ### VBISX - Short-Term Bond Index Fund
 
-The Vanguard Short-Term Bond Index Fund ^[@VBISX:TheVanguardGroup:2016] (VBISX) is an ETF that provides investors with exposure to a diversified portoflio of short-term bonds. This fund holds positions in both corporate and U.S. Government short-term bonds with maturities of 1 to 5 years. Due to the fact that short-term bonds have low duration and convexity, investors can expect minimal price movement with relation to interest rates from this fund, and thus lower yield. This fund uses the Barclays U.S. Government/Credit Float Adjusted 1-5 Year Index ^[@1to5YearGovernmentCreditIndex:BarclaysBankPLC:2015] as its benchmark.
+The Vanguard Short-Term Bond Index Fund ^[@VBISX:TheVanguardGroup:2016] (VBISX) is an ETF that provides investors with exposure to a diversified portoflio of short-term bonds (i.e. debt obligations). This fund holds positions in both corporate and U.S. Government short-term bonds with maturities of 1 to 5 years. Due to the fact that short-term bonds have low duration and convexity, investors can expect minimal price movement with relation to interest rates from this fund, and thus lower yield. This fund uses the Barclays U.S. Government/Credit Float Adjusted 1-5 Year Index ^[@1to5YearGovernmentCreditIndex:BarclaysBankPLC:2015] as its benchmark.
 
 ### VPACX - Pacific Stock Index Fund
 
