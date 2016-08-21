@@ -4,6 +4,7 @@
 
 library(boot)
 library(captioner)
+library(corrplot)
 library(IntroCompFinR)
 library(knitr)
 library(lubridate)
@@ -33,6 +34,7 @@ asset.names <- c("VFINX", "VEURX", "VEIEX", "VBLTX", "VBISX", "VPACX")
 asset.colors <- c("lightcyan4", "lightcoral", "lightseagreen", "lightskyblue", "lightsalmon", "lightslateblue")
 export.pricedata.name <- "price_data.xlsx"
 risk.free <- 0.0004167 # Risk free rate
+w0 <- 100000 # Intial investment for value at risk calculations
 
 # Macroeconomic Events
 dates.macro <- c(decimal_date(ymd("2012-04-15")), decimal_date(ymd("2015-08-21")))
@@ -100,20 +102,38 @@ panel.time.plots.dates <- function (...) {
 # Miscellaneous
 ############################
 
+# Function to format and print confidence intervals
+# interval arg: c(lower, upper)
+stat.ci.print <- function (interval, digits = 6) {
+	arg <- paste("[%1.", digits, "f, %1.", digits, "f]", sep = "")
+	sprintf(arg, interval[1], interval[2])
+}
+
 # Function to format and print a generated (normal) confidence interval, given a
 # level of tolerance, mean and standart deviation.
 stat.ci.generator <- function (mean, sd, ci, digits = 6) {
-	lower.q <- mean - sd * qnorm(ci / 2)
-	upper.q <- mean + sd * qnorm(ci / 2)
-	paste("[", format(lower.q, trim = TRUE, digits = digits), ", ", format(upper.q, trim = TRUE, digits = digits), "]", sep = "")
-	arg <- paste("[%1.", digits, "f, %1.", digits, "f]", sep = "")
-	sprintf(arg, lower.q, upper.q)
+	lower <- mean - sd * qnorm(ci / 2)
+	upper <- mean + sd * qnorm(ci / 2)
+	stat.ci.print(c(lower, upper), digits)
 }
 
 # Function to format a percentage to a given number of digits, given a decimal percentage
 format.perc <- function (perc, digits = 3) {
 	arg <- paste("%2.", digits, "f%%", sep = "")
 	sprintf(arg, abs(perc) * 100)
+}
+
+# Function to calculate Value At Risk, given an initial investment, mean, sd and risk level
+var.calculate.norm <- function (mean, sd, risk, initial = w0) {
+	q <- mean + sd * qnorm(risk)
+	val.at.risk <- (exp(q) - 1) * initial
+	abs(val.at.risk)
+}
+
+var.calculate.historical <- function (returns, risk, initial = w0) {
+	q <- quantile(returns, probs = risk)
+	val.at.risk <- (exp(q) - 1) * initial
+	abs(val.at.risk)
 }
 
 # Bootstrap functions
@@ -129,11 +149,28 @@ boot.se <- function (x) {
 	sd(x$t)
 }
 
+# Function to extract upper and lower confidence intervals from a boot.ci object
+# See ?boot.ci for more information
+boot.ci.extract.normal <- function (x) {
+	data <- as.numeric(x$normal)
+	lower <- data[2]
+	upper <- data[3]
+	c(lower, upper)
+}
+
 # Function to calculate the Sharpe Ratio for a bootstrap process
 asset.boot.sr <- function (x, idx, rf = risk.free) {
 	data <- x[idx]
 	sr <- (mean(data) - rf) / sd(data)
 	sr
+}
+
+asset.boot.var <- function(x, idx, risk, initial = w0) {
+	mean <- mean(x[idx])
+	sd <- sd(x[idx])
+	q <- mean + sd * qnorm(risk)
+	var <- (exp(q) - 1) * initial
+	abs(var)
 }
 
 ############
@@ -359,14 +396,15 @@ kable(asset.univar.a.table)
 # Risk Return tradeoff graph
 ############
 
-caption(name = "asset_risk_return_tradeoff", name = "Risk-Return Tradeoff for each of the ETFs")
+figures.add(name = "asset_risk_return_tradeoff", caption = "Risk-Return Tradeoff for each of the ETFs")
 
 # Creating the plot
 plot(x = asset.univar.stats$sd, y = asset.univar.stats$mean, ylab = "Expected Return", xlab = "Standard Deviation", main = "", type = "n")
 grid()
 text(x = asset.univar.stats$sd, y = asset.univar.stats$mean, labels = asset.names, offset = 1, pos = c(rep(4,2), 2, rep(4, 3)), col = asset.colors)
 points(x = asset.univar.stats$sd, y = asset.univar.stats$mean, col = asset.colors, pch = 4)
-abline(h = 0, lty = 2, col = )
+abline(h = 0, lty = 2, col = "lightsteelblue4")
+
 
 ############
 # Correlation Matirx
@@ -384,3 +422,49 @@ figures.add(name = "asset_correlation_plot", caption = "Correlation Plot for the
 # Displaying the correlation matrix
 tables.add(name = "asset_corelation_matrix", caption = "Cross-Correlation Matrix of ETFs")
 kable(rho.mat, caption = tables("asset_correlation_matrix"))
+
+
+############
+# Value at Risk
+############
+
+# Calculating 1% and 5% VaR assuming the normal distriution (Annual),
+# all calculations after this are for monthly returns
+asset.var.01.annual <- var.calculate.norm(asset.univar.a.mean, asset.univar.a.sd, 0.01)
+asset.var.05.annual <- var.calculate.norm(asset.univar.a.mean, asset.univar.a.sd, 0.05)
+
+# Calculating 1% and 5% VaR assuming the normal distribution
+asset.var.01 <- var.calculate.norm(asset.univar.stats$mean, asset.univar.stats$sd, 0.01)
+asset.var.05 <- var.calculate.norm(asset.univar.stats$mean, asset.univar.stats$sd, 0.05)
+
+# Calculating 1% and 5% VaR using emperical quantiles
+asset.var.01.emperical <- apply(ret.df, 2, var.calculate.historical, risk = 0.01)
+asset.var.05.emperical <- apply(ret.df, 2, var.calculate.historical, risk = 0.05)
+
+# Calculating bootstrapped SE and 95% confidence intervals
+asset.var.01.boot <- apply(ret.df, 2, boot, statistic = asset.boot.var, R = sims, risk = 0.01)
+asset.var.05.boot <- apply(ret.df, 2, boot, statistic = asset.boot.var, R = sims, risk = 0.05)
+
+# Extracting SE from bootstrap data
+asset.var.01.boot.se <- as.numeric(lapply(asset.var.01.boot, boot.se))
+asset.var.05.boot.se <- as.numeric(lapply(asset.var.05.boot, boot.se))
+
+asset.var.01.boot.95ci <- lapply(lapply(asset.var.01.boot, boot.ci, conf = 0.95, type = c("norm")), boot.ci.extract.normal)
+asset.var.05.boot.95ci <- lapply(lapply(asset.var.05.boot, boot.ci, conf = 0.95, type = c("norm")), boot.ci.extract.normal)
+
+asset.var.01.boot.95ci.print <- unlist(lapply(asset.var.01.boot.95ci, stat.ci.print, digits = 2))
+asset.var.05.boot.95ci.print <- unlist(lapply(asset.var.05.boot.95ci, stat.ci.print, digits = 2))
+
+asset.var.01.table <- data.frame(asset.var.01, asset.var.01.emperical, asset.var.01.annual, asset.var.01.boot.se, asset.var.01.boot.95ci.print)
+asset.var.05.table <- data.frame(asset.var.05, asset.var.05.emperical, asset.var.05.annual, asset.var.05.boot.se, asset.var.05.boot.95ci.print)
+
+colnames(asset.var.01.table) <- c("1% VaR (A)", "1% Var (E)", "1% VaR (Annual, A)", "1% VaR SE (B, A)", "1% VaR SE 95% CI (B, A)")
+colnames(asset.var.05.table) <- c("5% VaR (A)", "5% Var (E)", "5% VaR (Annual, A)", "5% VaR SE (B, A)", "5% VaR SE 95% CI (B, A)")
+rownames(asset.var.01.table) <- asset.names
+rownames(asset.var.05.table) <- asset.names
+
+tables.add(name = "asset_var_01", caption = "1% Value at Risk Analysis for each ETF (Key: A: Analytical Normal, E - Emperical, B - Bootstrap)")
+tables.add(name = "asset_var_01", caption = "5% Value at Risk Analysis for each ETF (Key: A: Analytical Normal, E - Emperical, B - Bootstrap)")
+
+kable(asset.var.01.table, caption = tables("asset_var_01"), digits = 2)
+kable(asset.var.05.table, caption = tables("asset_var_05"), digits = 2)
