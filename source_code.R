@@ -449,22 +449,31 @@ asset.var.05.boot <- apply(ret.df, 2, boot, statistic = asset.boot.var, R = sims
 asset.var.01.boot.se <- as.numeric(lapply(asset.var.01.boot, boot.se))
 asset.var.05.boot.se <- as.numeric(lapply(asset.var.05.boot, boot.se))
 
+# Calculating 95% confidence intervals for each
 asset.var.01.boot.95ci <- lapply(lapply(asset.var.01.boot, boot.ci, conf = 0.95, type = c("norm")), boot.ci.extract.normal)
 asset.var.05.boot.95ci <- lapply(lapply(asset.var.05.boot, boot.ci, conf = 0.95, type = c("norm")), boot.ci.extract.normal)
 
+# Prettyprinting confidence intervals
 asset.var.01.boot.95ci.print <- unlist(lapply(asset.var.01.boot.95ci, stat.ci.print, digits = 2))
 asset.var.05.boot.95ci.print <- unlist(lapply(asset.var.05.boot.95ci, stat.ci.print, digits = 2))
 
+# Creating tables with stats for Value at Risk at each level of risk
 asset.var.01.table <- data.frame(asset.var.01, asset.var.01.emperical, asset.var.01.annual, asset.var.01.boot.se, asset.var.01.boot.95ci.print)
 asset.var.05.table <- data.frame(asset.var.05, asset.var.05.emperical, asset.var.05.annual, asset.var.05.boot.se, asset.var.05.boot.95ci.print)
 
+# Changing col and row names
 colnames(asset.var.01.table) <- c("1% VaR (A)", "1% Var (E)", "1% VaR (Annual, A)", "1% VaR SE (B, A)", "1% VaR SE 95% CI (B, A)")
 colnames(asset.var.05.table) <- c("5% VaR (A)", "5% Var (E)", "5% VaR (Annual, A)", "5% VaR SE (B, A)", "5% VaR SE 95% CI (B, A)")
 rownames(asset.var.01.table) <- asset.names
 rownames(asset.var.05.table) <- asset.names
 
+# Adding captions and displaying tables
 tables.add(name = "asset_var_01", caption = "1% Value at Risk Analysis for each ETF (Key: A: Analytical Normal, E - Emperical, B - Bootstrap)")
 tables.add(name = "asset_var_01", caption = "5% Value at Risk Analysis for each ETF (Key: A: Analytical Normal, E - Emperical, B - Bootstrap)")
-
 kable(asset.var.01.table, caption = tables("asset_var_01"), digits = 2)
 kable(asset.var.05.table, caption = tables("asset_var_05"), digits = 2)
+
+
+############
+# Rolling Analysis
+############
