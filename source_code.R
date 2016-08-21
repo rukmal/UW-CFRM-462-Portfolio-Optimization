@@ -32,6 +32,7 @@ tables <- captioner(prefix = "Table")
 asset.names <- c("VFINX", "VEURX", "VEIEX", "VBLTX", "VBISX", "VPACX")
 asset.colors <- c("lightcyan4", "lightcoral", "lightseagreen", "lightskyblue", "lightsalmon", "lightslateblue")
 export.pricedata.name <- "price_data.xlsx"
+risk.free <- 0.0004167 # Risk free rate
 
 # Macroeconomic Events
 dates.macro <- c(decimal_date(ymd("2012-04-15")), decimal_date(ymd("2015-08-21")))
@@ -115,6 +116,26 @@ format.perc <- function (perc, digits = 3) {
 	sprintf(arg, abs(perc) * 100)
 }
 
+# Bootstrap functions
+############################
+
+# Function to get the target value (t0) from a bootstrap object
+boot.target <- function (x) {
+	x$t0
+}
+
+# Function to compute and return the standard deviation of the values from a bootstrap process
+boot.se <- function (x) {
+	sd(x$t)
+}
+
+# Function to calculate the Sharpe Ratio for a bootstrap process
+asset.boot.sr <- function (x, idx, rf = risk.free) {
+	data <- x[idx]
+	sr <- (mean(data) - rf) / sd(data)
+	sr
+}
+
 ############
 # Downloading and cleaning up ETF historical price data
 ############
@@ -145,7 +166,7 @@ colnames(prices) <- asset.names
 ############
 
 figures.add(name = "time_plot_price", caption = "Timeplot of ETF prices")
-plot(prices, xlab = "Time", panel = panel.time.plots.dates, col = asset.colors, main = "", caption = figures("time_plot_price"))
+plot(prices, xlab = "Time", panel = panel.time.plots.dates, col = asset.colors, main = "")
 
 
 ############
@@ -199,7 +220,7 @@ figures.add(name = "time_plot_equity_curve", caption = "Growth of $1 investment"
 # ETF univariate statistics
 ############
 
-univariate.stats <- c(mean, sd, var, skewness, kurtosis)
+univariate.stats <- c(mean, var, sd, skewness, kurtosis)
 univariate.stats.names <- c("Mean", "Variance", "Std Dev", "Skewness", "Excess Kurtosis")
 asset.univariate.stats <- data.frame()
 
@@ -230,7 +251,7 @@ apply(ret.z, 2, fourPanelPlot)
 
 figures.add(name = "cc_returns_boxplot", caption = "Box Plot of CC Monthly Returns of the ETFs")
 ret.ordered <- apply(ret.df, 2, sort, method = "shell")
-boxplot(ret.ordered, width = rep(1,6), plot = TRUE, col = asset.colors, ylab = "Continuously Compounded Returns", xlab = "Exchange Traded Fund (ETF) Name", caption = figures("cc_returns_bboxplot"))
+boxplot(ret.ordered, width = rep(1,6), plot = TRUE, col = asset.colors, ylab = "Continuously Compounded Returns", xlab = "Exchange Traded Fund (ETF) Name")
 
 
 ############
@@ -274,7 +295,7 @@ asset.se.mean.perc <- asset.se.mean / asset.univar.stats$mean
 asset.se.mean.table <- data.frame(asset.univar.stats$mean, asset.se.mean, format.perc(asset.se.mean.perc), stat.ci.generator(asset.univar.stats$mean, asset.se.mean, 0.05))
 rownames(asset.se.mean.table) <- asset.names
 colnames(asset.se.mean.table) <- c("Mean", "Mean SE", "Mean SE (%)", "95% Confidence Interval")
-table.add(name = "asset_mean_se", caption = "Standard Errors and Confidence Intervals for ETF Return Means")
+tables.add(name = "asset_mean_se", caption = "Standard Errors and Confidence Intervals for ETF Return Means")
 kable(asset.se.mean.table, caption = table("asset_mean_se"))
 
 # Computing SE and 95% CI of the SD
@@ -283,6 +304,83 @@ asset.se.sd.perc <- asset.se.sd / asset.univar.stats$sd
 # Creating and formatting SD SE table with CI and percentage SE
 asset.se.sd.table <- data.frame(asset.univar.stats$sd, asset.se.sd, format.perc(asset.se.sd.perc), stat.ci.generator(asset.univar.stats$sd, asset.se.sd, 0.05))
 rownames(asset.se.sd.table) <- asset.names
-colnames(asset.se.sd.table) <- c("Std. Dev", "Std. Dev SE", "Std. Dev SE (%)", "95% Confidence Interval")
-talbe.add(name = "asset_se_se", caption = "Standard Errors and Confidence Intervals for ETF Return Standard Deviations")
+colnames(asset.se.sd.table) <- c("Std Dev", "Std Dev SE", "Std Dev SE (%)", "95% Confidence Interval")
+tables.add(name = "asset_se_se", caption = "Standard Errors and Confidence Intervals for ETF Return Standard Deviations")
 kable(asset.se.sd.table, caption = table("asset_sd_se"))
+
+
+############
+# Sharpe Ratios, with Bootstrapped Mean and SE
+############
+
+# Number of simulations
+sims <- 9999
+
+# Computing Sharpe Ratios
+asset.univar.sr <- (asset.univar.stats$mean - risk.free) / asset.univar.stats$sd
+
+# Estimating Sharpe Ratios (mean and se) with Bootsrtap
+asset.univar.sr.boot <- apply(ret.df, 2, boot, statistic = asset.boot.sr, R = sims)
+# Extracting data from bootstrap simulations
+asset.univar.sr.boot.x <- as.numeric(lapply(asset.univar.sr.boot, boot.target))
+asset.univar.sr.boot.se <- as.numeric(lapply(asset.univar.sr.boot, boot.se))
+asset.univar.sr.boot.perc <- asset.univar.sr.boot.se / asset.univar.sr.boot.x
+
+asset.univar.sr.table <- data.frame(asset.univar.sr, asset.univar.sr.boot.x, asset.univar.sr.boot.se, format.perc(asset.univar.sr.boot.perc))
+
+colnames(asset.univar.sr.table) <- c("Sharpe Ratio (A)", "Sharpe Ratio (B)", "Sharpe Ratoio SE (B)", "Sharpe Ratio SE % (B)")
+rownames(asset.univar.sr.table) <- asset.names
+tables.add(name = "asset_sr_stats", caption = "Monthly Sharpe Ratios with Bootstrap-estimated Standard Errors (Key: A - Analytical, B - Bootstrap)")
+kable(asset.univar.sr.table)
+
+
+############
+# Annualizing Results
+############
+
+# Annualizing risk-free rate
+risk.free.a <- risk.free * 12
+
+# Annualizing stats
+asset.univar.a.mean <- asset.univar.stats$mean * 12
+asset.univar.a.sd <- asset.univar.stats$sd * sqrt(12)
+asset.univar.a.sr <- (asset.univar.a.mean - risk.free.a) / asset.univar.a.sd
+
+# Creating table to be displayed
+asset.univar.a.table <- data.frame(asset.univar.a.mean, asset.univar.a.sd, asset.univar.a.sr)
+colnames(asset.univar.a.table) <- c("Annualized Mean", "Annualized Std Dev", "Annualized Sharpe Ratio")
+rownames(asset.univar.a.table) <- asset.names
+
+tables.add(name = "asset_annualized_stats", caption = "Annualized Mean, Standard Deviation and Sharpe Return for the ETFs")
+kable(asset.univar.a.table)
+
+
+############
+# Risk Return tradeoff graph
+############
+
+caption(name = "asset_risk_return_tradeoff", name = "Risk-Return Tradeoff for each of the ETFs")
+
+# Creating the plot
+plot(x = asset.univar.stats$sd, y = asset.univar.stats$mean, ylab = "Expected Return", xlab = "Standard Deviation", main = "", type = "n")
+grid()
+text(x = asset.univar.stats$sd, y = asset.univar.stats$mean, labels = asset.names, offset = 1, pos = c(rep(4,2), 2, rep(4, 3)), col = asset.colors)
+points(x = asset.univar.stats$sd, y = asset.univar.stats$mean, col = asset.colors, pch = 4)
+abline(h = 0, lty = 2, col = )
+
+############
+# Correlation Matirx
+############
+
+# Computing correlation matrix
+rho.mat <- cor(ret.df)
+# Computing covariance matirx
+cov.mat <- cov(ret.df)
+
+# Plotting the correlation matrix
+corrplot.mixed(rho.mat, upper = "ellipse", col = colorRampPalette(c("white","cadetblue2", "cadetblue4"))(20), tl.col = asset.colors)
+figures.add(name = "asset_correlation_plot", caption = "Correlation Plot for the Cross Cross-Correlation between ETFs")
+
+# Displaying the correlation matrix
+tables.add(name = "asset_corelation_matrix", caption = "Cross-Correlation Matrix of ETFs")
+kable(rho.mat, caption = tables("asset_correlation_matrix"))
