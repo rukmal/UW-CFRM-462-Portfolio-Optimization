@@ -514,6 +514,9 @@ for (i in seq(1, length(asset.names))) {
 	text(x = 2011.75, y = asset.cer.parameters[, i], labels = c("Mean", "Std Dev"), pos = 3, offset = 0.5)
 }
 
+# Adding caption
+figures.add(name = "rolling_cer_parameters", caption = "Rolling CER Parameter Estimates with CC Returns of each ETF")
+
 # Resetting plot area
 par(default.par)
 
@@ -524,6 +527,9 @@ asset.vfinx.vbltx.roll.cor <- rollapply(ret.z, width = width, FUN = rho.calculat
 plot(asset.vfinx.vbltx.roll.cor, ylab = "Rolling Correlation of Returns between VFINX and VBLTX", col = "dodgerblue", xlab = "Time")
 grid()
 abline(h = c(0, rho.mat["VFINX", "VBLTX"]), col = c("black", "brown2"), lty = c(1, 2))
+
+# Adding caption
+figures.add(name = "rolling_rho_vfinx_vbltx", caption = "Rolling Estimate of Correlation of VFINX and VBLTX")
 
 
 ############
