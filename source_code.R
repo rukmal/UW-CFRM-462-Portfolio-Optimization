@@ -17,7 +17,7 @@ library(xlsx)
 ############
 
 # Plot region setup
-default.par <- par()
+default.par <- par(no.readonly = TRUE)
 par(mgp = c(0, 1, 0), mar = c(4.5, 4, 1, 1), mfrow = c(1,1))
 
 # Captioner setup
@@ -102,6 +102,14 @@ panel.time.plots.dates <- function (...) {
 # Miscellaneous
 ############################
 
+# Function to darken a color
+darken <- function (color, factor = 1.4) {
+	col <- col2rgb(color)
+	col <- col / factor
+	col <- rgb(t(col), maxColorValue = 255)
+	col
+}
+
 # Function to format and print confidence intervals
 # interval arg: c(lower, upper)
 stat.ci.print <- function (interval, digits = 6) {
@@ -130,10 +138,18 @@ var.calculate.norm <- function (mean, sd, risk, initial = w0) {
 	abs(val.at.risk)
 }
 
+# Function to calculate Value at Risk, using emperical (i.e. historical) quantiles
 var.calculate.historical <- function (returns, risk, initial = w0) {
 	q <- quantile(returns, probs = risk)
 	val.at.risk <- (exp(q) - 1) * initial
 	abs(val.at.risk)
+}
+
+# Function to calculate the correlation betwen two time series, given a zoo object
+# of returns, and column names
+rho.calculate <- function (returns, assetname1 = "VFINX", assetname2 = "VBLTX") {
+	rho <- cor(returns[, assetname1], returns[, assetname2])
+	rho
 }
 
 # Bootstrap functions
@@ -295,7 +311,7 @@ boxplot(ret.ordered, width = rep(1,6), plot = TRUE, col = asset.colors, ylab = "
 # Plotting Sample Autocorrelation for each ETF
 ############
 
-par(mfrow = c(3,2))
+par(mfrow = c(3, 2), mar = c(2, 4, 0.2, 0.2))
 
 sacf = data.frame()
 
@@ -476,4 +492,40 @@ kable(asset.var.05.table, caption = tables("asset_var_05"), digits = 2)
 
 ############
 # Rolling Analysis
+############
+
+# Setting width for rolling estimates
+width <- 24
+
+# Calculating rolling means and sds
+asset.univar.roll.mean <- rollapply(ret.z, width = width, FUN = mean, align = "right", fill = NA)
+asset.univar.roll.sd <- rollapply(ret.z, width = width, FUN = sd, align = "right", fill = NA)
+
+# Setting up plot area
+par(mfrow = c(3, 2), mar = c(2, 4, 0.2, 0.2))
+asset.cer.parameters <- t(asset.univar.stats[c("mean", "sd")])
+
+# Looping through each asset and adding graph to plot
+for (i in seq(1, length(asset.names))) {
+	plot(ret.z[,i], col = asset.colors[i], xlab = "Time", ylab = paste(asset.names[i], "CC Returns"), panel = panel.time.plots)
+	lines(asset.univar.roll.mean[, i], col = darken(asset.colors[i]), lty = 2, lwd = 1.5)
+	lines(asset.univar.roll.sd[, i], col = darken(darken(asset.colors[i])), lty = 3, lwd = 1.5)
+	abline(h = asset.cer.parameters[,i], lty = c(2, 3))
+	text(x = 2011.75, y = asset.cer.parameters[, i], labels = c("Mean", "Std Dev"), pos = 3, offset = 0.5)
+}
+
+# Resetting plot area
+par(default.par)
+
+# Calculating rolling correlation between VFINX and VBLTX
+asset.vfinx.vbltx.roll.cor <- rollapply(ret.z, width = width, FUN = rho.calculate, align = "right", fill = NA, by.column = FALSE)
+
+# Plotting graph of the rolling correlations against each of the standard deviations
+plot(asset.vfinx.vbltx.roll.cor, ylab = "Rolling Correlation of Returns between VFINX and VBLTX", col = "dodgerblue", xlab = "Time")
+grid()
+abline(h = c(0, rho.mat["VFINX", "VBLTX"]), col = c("black", "brown2"), lty = c(1, 2))
+
+
+############
+# Portfolio Theory
 ############
