@@ -91,15 +91,6 @@ get.adjclose <- function (instrument, interval, start = "1800-01-01", end = Sys.
 	prices <- get.hist.quote(instrument = instrument, quote = c("AdjClose"), start = start, end = end, compression = interval, retclass = "zoo")
 	prices
 }
-
-
-# Plot Panel for plotting time series data
-panel.time.plots <- function (...) {
-	lines(...)
-	grid()
-	abline(h = 0)
-}
-
 ```
 
 ```{r child="chapters/1_Introduction.Rmd"}

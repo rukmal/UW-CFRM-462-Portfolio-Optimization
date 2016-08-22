@@ -108,34 +108,19 @@ panel.time.plots.dates <- function (...) {
 port.weights.plot <- function (weights) {
 	barplot(weights, col = asset.colors, names.arg = asset.names, ylab = "Portfolio Asset Weight", xlab = "Assets")
 	abline(h = 0)
+	grid(nx = NA, ny = NULL)
+}
+
+# Function to plot a risk-return graph, with each of the assets on the plot
+plot.risk.return <- function () {
+	par(mar = c(4, 4, 1, 1))
+	plot(x = asset.univar.stats$sd, y = asset.univar.stats$mean, col = asset.colors, pch = 4, cex = 2, lwd = 1.5, xlab = "Standard Deviation of Returns", ylab = "Expected Return", ylim = c(-0.005, 0.016))
+	grid()
+	abline(h = 0)
 }
 
 # Miscellaneous
 ############################
-
-# Function to calculate relevant portfolio statistics, given a mean and sd
-port.stats <- function (er, sd, annualized = FALSE) {
-	sr <- sharpe.ratio(er, sd, annualized = annualized)
-	var01 <- var.calculate.norm(er, sd, risk = 0.01)
-	var05 <- var.calculate.norm(er, sd, risk = 0.05)
-	as.numeric(c(er, sd, sr, var01, var05))
-}
-
-# Function to annualize mean and sd, and compute annualized sharpe ratio and return a list with results
-annualize.stats <- function (er.m, sd.m) {
-	er.a <- er.m * 12
-	sd.a <- sd.m * sqrt(12)
-	port.stats(er.a, sd.a, annualized = TRUE)
-}
-
-# Function to compute the Sharpe Ratio, given the expected return and standard deviation of returns
-sharpe.ratio <- function (er, sd, annualized = FALSE) {
-	if (annualized) {
-		(er - risk.free.a) / sd
-	} else {
-		(er - risk.free) / sd
-	}
-}
 
 # Function to darken a color
 darken <- function (color, factor = 1.4) {
@@ -192,6 +177,58 @@ var.calculate.historical <- function (returns, risk, initial = w0) {
 rho.calculate <- function (returns, assetname1 = "VFINX", assetname2 = "VBLTX") {
 	rho <- cor(returns[, assetname1], returns[, assetname2])
 	rho
+}
+
+# Portfolio Theory functions
+############################
+
+# Function to calculate relevant portfolio statistics, given a mean and sd
+port.stats <- function (er, sd, annualized = FALSE) {
+	sr <- sharpe.ratio(er, sd, annualized = annualized)
+	var01 <- var.calculate.norm(er, sd, risk = 0.01)
+	var05 <- var.calculate.norm(er, sd, risk = 0.05)
+	as.numeric(c(er, sd, sr, var01, var05))
+}
+
+# Function to annualize mean and sd, and compute annualized sharpe ratio and return a list with results
+annualize.stats <- function (er.m, sd.m) {
+	er.a <- er.m * 12
+	sd.a <- sd.m * sqrt(12)
+	port.stats(er.a, sd.a, annualized = TRUE)
+}
+
+# Function to compute the Sharpe Ratio, given the expected return and standard deviation of returns
+sharpe.ratio <- function (er, sd, annualized = FALSE) {
+	if (annualized) {
+		(er - risk.free.a) / sd
+	} else {
+		(er - risk.free) / sd
+	}
+}
+
+# Function to calculate composite portfolio weights, given an affine combination factor
+# alpha, and the weights of two portfolios
+port.affine.combination.weight <- function (alpha, w1, w2) {
+	alpha * w1 + (1 - alpha) * w2
+}
+
+# Function to calculate the expected return of a portfolio with asset weights w,
+# given expected returns er
+port.er <- function (w, er = asset.univar.stats$mean) {
+	er %*% w
+}
+
+# Function to calulate the variance of a portfolio with asset weights w, given
+# covariance matrix sigma.mat
+port.var <- function (w, sigma.mat = cov.mat) {
+	w %*% cov.mat %*% w
+}
+
+# Function to determine the standard deviation of an efficient portfolio at a given expected return
+# providing no short sales are allowed
+port.efficient.sd <- function (target.er, er = asset.univar.stats$mean, sigma.mat = cov.mat) {
+	candidate.portfolio <- efficient.portfolio(target.return = target.er, er = er, cov.mat = sigma.mat, shorts = FALSE)
+	candidate.portfolio$sd
 }
 
 # Bootstrap functions
@@ -583,32 +620,15 @@ port.shorts.minvar <- globalMin.portfolio(asset.univar.stats$mean, cov.mat)
 
 # Plotting portfolio weights
 port.weights.plot(port.shorts.minvar$weights)
-figures.add(name = "port_short_minvar_weights", caption = "Asset Weights of Global Minimum Variance Portfolio with Short Sales")
+figures.add(name = "port_short_minvar_weights", caption = "Asset Weights of Global Minimum Variance Portfolio with Short Sales (SMINVAR)")
 
 # Creating table with portfolio stats
 port.shorts.minvar.table <- data.frame(port.stats(port.shorts.minvar$er, port.shorts.minvar$sd), annualize.stats(port.shorts.minvar$er, port.shorts.minvar$sd))
 port.shorts.minvar.table <- format.port.table(port.shorts.minvar.table)
 
 # Printing portfolio statistics, monthly and annualized
-tables.add(name = "port_short_minvar_stats", caption = "Monthly and Annualized Descriptive Statistics for Global Minimum Variance Portfolio with Short Sales")
+tables.add(name = "port_short_minvar_stats", caption = "Monthly and Annualized Descriptive Statistics for Global Minimum Variance Portfolio with Short Sales (SMINVAR)")
 kable(port.shorts.minvar.table, digits = 6, caption = tables("port_short_minvar_stats"))
-
-##################################
-
-# Global Minimum Variance Portfolio (wihtout shorts)
-port.long.minvar <- globalMin.portfolio(asset.univar.stats$mean, cov.mat, shorts = FALSE)
-
-# Plotting portfolio weights
-port.weights.plot(port.long.minvar$weights)
-figures.add(name = "port_long_minvar_weights", caption = "Asset Weights of Global Minimum Variance Portfolio without Short Sales")
-
-# Creating table with portfolio stats
-port.long.minvar.table <- data.frame(port.stats(port.long.minvar$er, port.long.minvar$sd), annualize.stats(port.long.minvar$er, port.long.minvar$sd))
-port.long.minvar.table <- format.port.table(port.long.minvar.table)
-
-# Printing portfolio statistics, monthly and annualized
-tables.add(name = "port_long_minvar_stats", caption = "Monthly and Annualized Descriptive Statistics for Global Minimum Variance Portfolio without Short Sales")
-kable(port.long.minvar.table, digits = 6, caption = tables("port_long_minvar_stats"))
 
 ##################################
 
@@ -617,12 +637,87 @@ port.shorts.evfinx <- efficient.portfolio(asset.univar.stats$mean, cov.mat, targ
 
 # Plotting portfolio weights
 port.weights.plot(port.shorts.evfinx$weights)
-figures.add(name = "port_long_evfinx_weights", caption = "Asset Weights of the Efficient Portfolio with a Target Return equal to VFINX")
+figures.add(name = "port_long_evfinx_weights", caption = "Asset Weights of the Efficient Portfolio with a Target Return equal to VFINX (EVFINX)")
 
 vfinx.stats <- asset.univar.stats["VFINX", ]
 port.shorts.evfinx.table <- data.frame(port.stats(port.shorts.evfinx$er, port.shorts.evfinx$sd), c(vfinx.stats$mean, vfinx.stats$sd, asset.univar.sr[1], asset.var.01[1], asset.var.05[1]))
 port.shorts.evfinx.table <- format.port.table(port.shorts.evfinx.table)
 
-colnames(port.shorts.evfinx.table) <- c("Efficient Portfolio", "VFINX")
-tables.add(name = "port_shorts_evfinx_stats", caption = "Descriptive Statistics of VFINX Return Equivalent Efficient Portoflio and VFINX")
+colnames(port.shorts.evfinx.table) <- c("EVFINX Efficient Portfolio", "VFINX")
+tables.add(name = "port_shorts_evfinx_stats", caption = "Descriptive Statistics of VFINX Return Equivalent Efficient Portoflio (EVFINX) and VFINX")
 kable(port.shorts.evfinx.table, digits = 6, caption = tables("port_shorts_evfinx_stats"))
+
+#################################
+
+# Computing Markowitz Bullet
+# Creating vector of affine combination factors
+alpha <- seq(-1, 1.5, 0.05)
+
+# Computing affine combinations of portfolio weights, to determine weights of portfolios
+# along the Markowitz bullet
+z <- lapply(alpha, port.affine.combination.weight, as.numeric(port.shorts.minvar$weights), as.numeric(port.shorts.evfinx$weights))
+
+# Computing portfolio statistics with asset weights computed above
+port.shorts.efficient.er <- lapply(z, port.er)
+port.shorts.efficient.var <- lapply(z, port.var)
+port.shorts.efficient.sd <- lapply(port.shorts.efficient.var, sqrt)
+
+#######################################
+
+# Computing the Tangency Portfolio (with Shorts)
+port.shorts.tangency <- tangency.portfolio(asset.univar.stats$mean, cov.mat, risk.free = risk.free)
+
+# Plotting portfolio weights
+port.weights.plot(port.shorts.tangency$weights)
+figures.add("port_shorts_tangency", caption = "Asset Weights for the Tangency Portfolio allowing Short Sales (STAN)")
+
+# Creating table with portfolio stats
+port.shorts.tangency.table <- data.frame(port.stats(port.shorts.tangency$er, port.shorts.tangency$sd), annualize.stats(port.shorts.tangency$er, port.shorts.tangency$sd))
+port.shorts.tangency.table <- format.port.table(port.shorts.tangency.table)
+# Removing VaR as it is not relevant
+port.shorts.tangency.table <- port.shorts.tangency.table[1:3, ]
+
+# Printing table
+tables.add(name = "port_short_tangency_stats", caption = "Monthly and Annualized Descriptive Statistics for the Tangency Portfolio allowing Short Sales (STAN)")
+kable(port.shorts.tangency.table, digits = 6, caption = tables("port_short_tangency_stats"))
+
+#######################################
+
+# Computation mean-variant efficient portfolios (i.e. tangency and risk-free asset)
+x <- seq(0, 0.05, 0.005)
+y <- x * sharpe.ratio(port.shorts.tangency$er, port.shorts.tangency$sd) + risk.free
+
+
+# Setting some colors
+port.colors <- c( "snow4", "springgreen", "turquoise1")
+port.shorts.efficient.color <- "violet"
+
+# Plotting Markowitz Bullet
+plot.risk.return()
+lines(x = port.shorts.efficient.sd, y = port.shorts.efficient.er, pch = 19, type = "o", cex = 0.5, col = port.shorts.efficient.color)
+points(x = c(port.shorts.minvar$sd, port.shorts.evfinx$sd, port.shorts.tangency$sd), y = c(port.shorts.minvar$er, port.shorts.evfinx$er, port.shorts.tangency$er), col = port.colors, pch = 4, cex = 2, lwd = 1.5)
+abline(h = port.shorts.evfinx$er, col = port.colors[2], lty = 2)
+legend(x = "topright", legend = c(asset.names, "SMINVAR Port", "EVFINX Port", "STAN Port"), col = c(asset.colors, port.colors), cex = 0.8, pch = 4)
+figures.add(name = "port_shorts_markowitz", caption = "Markowitz Bullet Generated by Efficient Portfolios with Shorts")
+lines(x = x, y = y, col = "yellow")
+
+# Clearing canvas
+figures.add(name = "port_shorts_markowitz", caption = "Markowitz Bullet Generated by Efficient Portfolios with Shorts")
+par(default.par)
+
+##################################
+
+# Global Minimum Variance Portfolio (wihtout shorts)
+port.long.minvar <- globalMin.portfolio(asset.univar.stats$mean, cov.mat, shorts = FALSE)
+
+# Plotting portfolio weights
+port.weights.plot(port.long.minvar$weights)
+figures.add(name = "port_long_minvar_weights", caption = "Asset Weights of Global Minimum Variance Portfolio without Short Sales (NSMINVAR)")
+
+# Creating table with portfolio stats
+port.long.minvar.table <- data.frame(port.stats(port.long.minvar$er, port.long.minvar$sd), annualize.stats(port.long.minvar$er, port.long.minvar$sd))
+port.long.minvar.table <- format.port.table(port.long.minvar.table)
+
+# Printing portfolio statistics, monthly and annualized
+tables.add(name = "port_long_minvar_stats", caption = "Monthly and Annualized Descriptive Statistics for Global Minimum Variance Portfolio without Short Sales (NSMINVAR)")
+kable(port.long.minvar.table, digits = 6, caption = tables("port_long_minvar_stats"))
