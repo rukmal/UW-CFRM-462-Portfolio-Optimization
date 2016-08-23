@@ -1,0 +1,54 @@
+---
+output: pdf_document
+---
+
+# Rolling Analysis
+
+## Motivation
+
+A key assumption of the CER model is that the returns being modeled are covariate stationary time series processes. Thus, all of the parameters used in the CER model (mean, standard deviation, etc.) are assumed to be time stationary. However, as evidenced by changing trends over time and the effect of market-wide crises on returns, this cannot always be assumed to be true.
+
+Rolling analysis involves the computation of smaller time horizon estimates for each of the parameters, within the time horizon of the sample itself. These trends can in turn be analyzed to determine the viability of the *stationary* assumption employed when modeling returns.
+
+## Rolling Analysis of Select ETF CER Model Parameters
+
+`r figures.cite("asset_rolling_analysis")` visualizes 24 month rolling estimated means and standard deviations of returns, along with the assumed constant mean and standard deviation of each return. These graphs provide a necesary insight into the behavior of the mean and standard deviation of each ETF over time, relative to the stationary assumed means and standard deviations, which are also displayed on the graph.
+
+It is clear from the graph that in some instances, rolling assumptions of each of the parameters do not conform to the overall estimates for the mean and standard deivation. In particular, there is clear variation in the rolling standard deviation of VFINX, compared to the stationary estimate. From the graph, it is clear that the standard deviation dropped during the period of 2014-2015, which was coupled with a rise in the rolling mean. Also, analysis of the rolling VEURX mean indicates that it used to be significantly higher than the time-stationary estimation suggests, particularly during the middle of the time horizon.
+
+
+```{r rolling_analyis, fig.cap = figures("asset_rolling_analysis")}
+figures.add(name = "asset_rolling_analysis", caption = "24 Month Rolling Estimates of ETF Mean and Standard Deviation")
+# Setting up plot area
+par(mfrow = c(3, 2), mar = c(2, 4, 0.2, 0.2))
+asset.cer.parameters <- t(asset.univar.stats[c("mean", "sd")])
+
+# Looping through each asset and adding graph to plot
+for (i in seq(1, length(asset.names))) {
+	plot(ret.z[,i], col = asset.colors[i], xlab = "Time", ylab = paste(asset.names[i], "CC Returns"), panel = panel.time.plots)
+	lines(asset.univar.roll.mean[, i], col = darken(asset.colors[i]), lty = 2, lwd = 1.5)
+	lines(asset.univar.roll.sd[, i], col = darken(darken(asset.colors[i])), lty = 3, lwd = 1.5)
+	abline(h = asset.cer.parameters[,i], lty = c(2, 3))
+	text(x = 2011.75, y = asset.cer.parameters[, i], labels = c("Mean", "Std Dev"), pos = 3, offset = 0.5)
+}
+```
+
+Overall gowever, there does not appear to be any significant, systematic deviations of the rolling estimates of the standard deviation or mean from their stationary counterparts. This observation suggests that employing the stationary estimations is approapriate for portfolio calculations involving the ETFs.
+
+## Rolling Analysis of Correlation
+
+Perhaps more important to the overall quality of a portfolio calculation would be the time-invariability of correlation. `r figures.cite("vfinx_vbltx_rolling_correlation")` displays a graph of 24 month rolling estimates of the correlation of returns between VFINX and VBLTX, which had a time-invariant approximated correlation of `r rho.mat["VBLTX", "VFINX"]`.
+
+```{r rolling_analysis, fig.cap = figures("vfinx_vbltx_rolling_correlation")}
+figures.add(name = "vfinx_vbltx_rolling_correlation", caption = "24 month Rolling Estimates of VFINX-VBLTX correlation")
+# Resetting plot area
+par(default.par)
+# Plotting graph of the rolling correlations against each of the standard deviations
+plot(asset.vfinx.vbltx.roll.cor, ylab = "Rolling Correlation of VFINX and VBLTX", col = "dodgerblue", xlab = "Time")
+grid()
+abline(h = c(0, rho.mat["VFINX", "VBLTX"]), col = c("black", "brown2"), lty = c(1, 2))
+```
+
+Analyzing the graph, it is clear that time-invariant assumed estimation of the correlation is heavily skewed by earlier correlations between each of the ETFs. As seen in the graph, the rolling correlation is predominantly over the estimation, and even goes positive towards the end of 2015, and more recently at the beginning of 2016. It appears that the correlation is the lowest at the first observation of the dataset, in mid 2013.
+
+It is the conclusion of observers of financial statistics that correlations between assets tend to increase at time of crisis. This effect is illustrated in the graph, as the correlation increases during the time of the European Debt Crisis, and is lower during the financial market rebound of the early part of this decade in the aftermath of the financial crisis. This analysis reiterates the importance the effect the time-invariant assumption of the CER Model has on implied returns of ETFs portfolios.

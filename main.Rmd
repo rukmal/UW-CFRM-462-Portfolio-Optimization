@@ -78,6 +78,11 @@ tables.cite <- function (table.ref) {
 ```{r child="chapters/2_Analysis.Rmd"}
 ```
 
+```{r child="chapters/3_Value_at_Risk.Rmd"}
+```
+
+```{r child="chapters/4_Rolling_Analysis.Rmd"}
+```
 
 \newpage
 
