@@ -109,6 +109,8 @@ The current standard for this type of measurement is *risk-adjusted return*. Ris
 	\text{Sharpe Ratio, SR} = \frac{\text{E[$r$]} - r_f}{\sigma}
 \end{gather*}
 
+> Note: For all future use in this project, the risk free rate is assumed to be, $r_f$ = `r paste(formatC(risk.free * 100, format = 'f', digits = 5 ), "%", sep = "")` continuously compounded, per month
+
 By considering both the level of potential returns from an investment along with the risk it presents, the Sharpe Ratio effectively quantifies the risk-return tradeoff, and is used across the industry to rank the value of investments. This relationship is perhaps best illustrated on a plot of an investment's risk versus return, as seen in `r figures.cite("asset_risk_return_tradeoff")` This is not to say however, that it is the final judge of a measurement, as every investor's level of risk aversion varies, and thus an investment that may seem extremely to one individual may be one that would never be considered by another.
 
 ```{r risk_return_tradeoff, fig.cap = figures("asset_risk_return_tradeoff")}

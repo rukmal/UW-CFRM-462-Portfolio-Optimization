@@ -19,14 +19,14 @@ Consider VEIEX, which has the highest estimated VaR at both the 1% and 5% level,
 
 On the other hand, VBISX exhibits the lowest VaRs for both levels, across both time horizons. This is to be expected, as it was the ETF that had the lowest variability of returns, and would thus have a higher expected return compared to its mean at the tails of its distribution.
 
+Furthermore, considering the estimation standard error calculated for each of the VaR, it is clear that despite these numbers add a sense of realism to possible returns from the assets, they are in fact estimates, and have high levels of variability. This is reflected in the 95% confidence intervals, where in some cases such as the 95% CI for 5% VaR for VEURX and VEIEX come in close proximity to the correspinding 1% VaR.
+
 ```{r etf_var}
 tables.add(name = "asset_var_01", caption = "1% Value at Risk Analysis for each ETF (Key: A: Analytical Normal, E - Emperical, B - Bootstrap)")
 tables.add(name = "asset_var_05", caption = "5% Value at Risk Analysis for each ETF (Key: A: Analytical Normal, E - Emperical, B - Bootstrap)")
 kable(asset.var.01.table, caption = tables("asset_var_01"), digits = 2)
 kable(asset.var.05.table, caption = tables("asset_var_05"), digits = 2)
 ```
-
-Furthermore, considering the estimation standard error calculated for each of the VaR, it is clear that despite these numbers add a sense of realism to possible returns from the assets, they are in fact estimates, and have high levels of variability. This is reflected in the 95% confidence intervals, where in some cases such as the 95% CI for 5% VaR for VEURX and VEIEX come in close proximity to the correspinding 1% VaR.
 
 While it may seem that the differences between the annual and monthly VaRs are extremely small, this is to be expected. It is due to the fact that unlike the annualized returns of the ETFs, VaR does not scale linearly, as it is an exponential of the affine combination of the expected return and standard deviation of the assets. Recall, the expected return is scaled by a factor of $12$, while the standard deviation is scaled by a factor of $\sqrt{12}$. This illustrates yet again the importance of the precision, and assumed time invariance of these estimates, as small changes may have a large effect on measures such as the VaR. Considerng the annual VaR in particular, an increase in the variance of returns over the course of a year would not be reflected in the monthly statistics, and thus not reflected in the annualized monthly statistics which may lead to a gross misestimation of metrics such as the yearly VaR.
 

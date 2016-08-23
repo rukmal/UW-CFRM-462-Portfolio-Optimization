@@ -7,6 +7,7 @@
 bibliography: bibliography.bib
 csl: apa.csl
 documentclass: report
+geometry: margin=0.75in
 output:
     pdf_document:
         fig_caption: true
@@ -23,11 +24,6 @@ options(digits = 6)
 
 ```{r source_code, eval = TRUE, include = FALSE, echo = FALSE}
 source("source_code.R")
-
-# To force kable to output in latex format
-kable <- function(...) {
-    knitr::kable(...)
-}
 
 library(captioner)
 
@@ -82,6 +78,9 @@ tables.cite <- function (table.ref) {
 ```
 
 ```{r child="chapters/4_Rolling_Analysis.Rmd"}
+```
+
+```{r child="chapters/5_Portfolio_Theory.Rmd"}
 ```
 
 \newpage

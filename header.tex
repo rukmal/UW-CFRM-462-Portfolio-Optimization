@@ -7,6 +7,7 @@
 \usepackage[hang, bottom]{footmisc}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{longtable}
 \usepackage{parskip}
 \usepackage{pgfplots}
 \usepackage{relsize}
@@ -43,3 +44,152 @@
 		#1 \\ #2 \\ #3
 	\end{bmatrix}
 }
+
+
+
+
+% This is a workaround for a showstopping bug in longtable.
+% It is sourced verbatim from: http://www.latex-project.org/cgi-bin/ltxbugs2html?pr=tools/3512
+%
+% In case that link ever dies, this is the diff to be applied to longtable.sty
+%
+%--- /usr/share/texmf/tex/latex/tools/longtable.sty 2001-09-27 06:50:51.000000000 -0400
+%+++ longtable.sty  2003-03-09 15:34:04.000000000 -0500
+%@@ -160,7 +160,7 @@
+%   \ifdim \dimen@>\z@\vfil\break\fi
+%       \global\@colroom\@colht
+%   \ifvoid\LT@foot\else
+%-    \advance\vsize-\ht\LT@foot
+%+    \global\advance\vsize-\ht\LT@foot
+%     \global\advance\@colroom-\ht\LT@foot
+%     \dimen@\pagegoal\advance\dimen@-\ht\LT@foot\pagegoal\dimen@
+%     \maxdepth\z@
+%@@ -189,9 +189,13 @@
+%     \LT@final@warn
+%   \fi
+%   \endgraf\penalty -\LT@end@pen
+%+  \ifvoid\LT@foot\else
+%+    \global\advance\vsize\ht\LT@foot
+%+    \global\advance\@colroom\ht\LT@foot
+%+    \dimen@\pagegoal\advance\dimen@\ht\LT@foot\pagegoal\dimen@
+%+  \fi
+%   \endgroup
+%   \global\@mparbottom\z@
+%-  \pagegoal\vsize
+%   \endgraf\penalty\z@\addvspace\LTpost
+%   \ifvoid\footins\else\insert\footins{}\fi}
+% \def\LT@nofcols#1&{%
+%@@ -388,18 +392,17 @@
+%       \setbox\z@\vbox{\unvbox\@cclv}%
+%       \ifdim \ht\LT@lastfoot>\ht\LT@foot
+%         \dimen@\pagegoal
+%+        \advance\dimen@\ht\LT@foot
+%         \advance\dimen@-\ht\LT@lastfoot
+%         \ifdim\dimen@<\ht\z@
+%           \setbox\@cclv\vbox{\unvbox\z@\copy\LT@foot\vss}%
+%           \@makecol
+%           \@outputpage
+%+            \global\vsize\@colroom
+%           \setbox\z@\vbox{\box\LT@head}%
+%         \fi
+%       \fi
+%-      \global\@colroom\@colht
+%-      \global\vsize\@colht
+%-      \vbox
+%-        {\unvbox\z@\box\ifvoid\LT@lastfoot\LT@foot\else\LT@lastfoot\fi}%
+%+      \unvbox\z@\ifvoid\LT@lastfoot\copy\LT@foot\else\box\LT@lastfoot\fi
+%     \fi
+%   \else
+%     \setbox\@cclv\vbox{\unvbox\@cclv\copy\LT@foot\vss}%
+%
+\makeatletter
+\def\LT@start{%
+  \let\LT@start\endgraf
+  \endgraf\penalty\z@\vskip\LTpre
+  \dimen@\pagetotal
+  \advance\dimen@ \ht\ifvoid\LT@firsthead\LT@head\else\LT@firsthead\fi
+  \advance\dimen@ \dp\ifvoid\LT@firsthead\LT@head\else\LT@firsthead\fi
+  \advance\dimen@ \ht\LT@foot
+  \dimen@ii\vfuzz
+  \vfuzz\maxdimen
+    \setbox\tw@\copy\z@
+    \setbox\tw@\vsplit\tw@ to \ht\@arstrutbox
+    \setbox\tw@\vbox{\unvbox\tw@}%
+  \vfuzz\dimen@ii
+  \advance\dimen@ \ht
+        \ifdim\ht\@arstrutbox>\ht\tw@\@arstrutbox\else\tw@\fi
+  \advance\dimen@\dp
+        \ifdim\dp\@arstrutbox>\dp\tw@\@arstrutbox\else\tw@\fi
+  \advance\dimen@ -\pagegoal
+  \ifdim \dimen@>\z@\vfil\break\fi
+      \global\@colroom\@colht
+  \ifvoid\LT@foot\else
+    \global\advance\vsize-\ht\LT@foot
+    \global\advance\@colroom-\ht\LT@foot
+    \dimen@\pagegoal\advance\dimen@-\ht\LT@foot\pagegoal\dimen@
+    \maxdepth\z@
+  \fi
+  \ifvoid\LT@firsthead\copy\LT@head\else\box\LT@firsthead\fi\nobreak
+  \output{\LT@output}}
+
+\def\endlongtable{%
+  \crcr
+  \noalign{%
+    \let\LT@entry\LT@entry@chop
+    \xdef\LT@save@row{\LT@save@row}}%
+  \LT@echunk
+  \LT@start
+  \unvbox\z@
+  \LT@get@widths
+  \if@filesw
+    {\let\LT@entry\LT@entry@write\immediate\write\@auxout{%
+      \gdef\expandafter\noexpand
+        \csname LT@\romannumeral\c@LT@tables\endcsname
+          {\LT@save@row}}}%
+  \fi
+  \ifx\LT@save@row\LT@@save@row
+  \else
+    \LT@warn{Column \@width s have changed\MessageBreak
+             in table \thetable}%
+    \LT@final@warn
+  \fi
+  \endgraf\penalty -\LT@end@pen
+  \ifvoid\LT@foot\else
+    \global\advance\vsize\ht\LT@foot
+    \global\advance\@colroom\ht\LT@foot
+    \dimen@\pagegoal\advance\dimen@\ht\LT@foot\pagegoal\dimen@
+  \fi
+  \endgroup
+  \global\@mparbottom\z@
+  \endgraf\penalty\z@\addvspace\LTpost
+  \ifvoid\footins\else\insert\footins{}\fi}
+
+\def\LT@output{%
+  \ifnum\outputpenalty <-\@Mi
+    \ifnum\outputpenalty > -\LT@end@pen
+      \LT@err{floats and marginpars not allowed in a longtable}\@ehc
+    \else
+      \setbox\z@\vbox{\unvbox\@cclv}%
+      \ifdim \ht\LT@lastfoot>\ht\LT@foot
+        \dimen@\pagegoal
+  \advance\dimen@\ht\LT@foot
+        \advance\dimen@-\ht\LT@lastfoot
+        \ifdim\dimen@<\ht\z@
+          \setbox\@cclv\vbox{\unvbox\z@\copy\LT@foot\vss}%
+          \@makecol
+          \@outputpage
+      \global\vsize\@colroom
+          \setbox\z@\vbox{\box\LT@head}%
+        \fi
+      \fi
+      \unvbox\z@\ifvoid\LT@lastfoot\copy\LT@foot\else\box\LT@lastfoot\fi
+    \fi
+  \else
+    \setbox\@cclv\vbox{\unvbox\@cclv\copy\LT@foot\vss}%
+    \@makecol
+    \@outputpage
+      \global\vsize\@colroom
+    \copy\LT@head\nobreak
+  \fi}
+\makeatother
+% End of fix for longtable

@@ -625,7 +625,7 @@ vfinx.stats <- asset.univar.stats["VFINX", ]
 port.shorts.evfinx.table <- data.frame(port.stats(port.shorts.evfinx$er, port.shorts.evfinx$sd), c(vfinx.stats$mean, vfinx.stats$sd, asset.univar.sr[1], asset.var.01[1], asset.var.05[1]))
 port.shorts.evfinx.table <- format.port.table(port.shorts.evfinx.table)
 
-colnames(port.shorts.evfinx.table) <- c("EVFINX Efficient Portfolio", "VFINX")
+colnames(port.shorts.evfinx.table) <- c("EVFINX Efficient Portfolio (EVFINX)", "VFINX")
 tables.add(name = "port_shorts_evfinx_stats", caption = "Descriptive Statistics of VFINX Return Equivalent Efficient Portoflio (EVFINX) and VFINX")
 kable(port.shorts.evfinx.table, digits = 6, caption = tables("port_shorts_evfinx_stats"))
 
@@ -672,6 +672,7 @@ y <- x * sharpe.ratio(port.shorts.tangency$er, port.shorts.tangency$sd) + risk.f
 # Setting some colors
 port.colors <- c( "snow4", "springgreen", "turquoise1")
 port.shorts.efficient.color <- "violet"
+tancency.set.color <- "yellowgreen"
 
 # Plotting Markowitz Bullet
 plot.risk.return()
@@ -699,3 +700,35 @@ port.long.minvar.table <- format.port.table(port.long.minvar.table)
 # Printing portfolio statistics, monthly and annualized
 tables.add(name = "port_long_minvar_stats", caption = "Monthly and Annualized Descriptive Statistics for Global Minimum Variance Portfolio without Short Sales (NSMINVAR)")
 kable(port.long.minvar.table, digits = 6, caption = tables("port_long_minvar_stats"))
+
+#######################################
+
+# Computing the Tangency Portfolio (no shorts)
+
+port.long.tangency <- tangency.portfolio(asset.univar.stats$mean, cov.mat, shorts = FALSE, risk.free = risk.free)
+
+# Plotting portfolio weights
+port.weights.plot(port.long.tangency$weights)
+
+port.long.tangency.table <- data.frame(port.stats(port.long.tangency$er, port.long.tangency$sd), annualize.stats(port.long.tangency$er, port.long.tangency$sd))
+port.long.tangency.table <- format.port.table(port.long.minvar.table)
+# Removing VaR as it is not relevant
+port.long.tangency.table <- port.long.tangency.table[1:3, ]
+
+kable(port.long.tangency.table, digits = 6, caption = tables("port_long_tangency_table"))
+
+#############################################
+
+# Computing the Markowitz Bullet (no shorts)
+
+port.long.efficient.er <- seq(0, max(asset.univar.stats$mean), 0.00001)
+
+port.long.efficient.sd <- lapply(port.long.efficient.er, port.efficient.sd)
+
+port.long.efficient.color <- "violetred"
+plot.risk.return()
+lines(x = port.long.efficient.sd, y = port.long.efficient.er, pch = 19, type = "l", cex = 0.5, col = port.long.efficient.color)
+lines(x = port.shorts.efficient.sd, y = port.shorts.efficient.er, pch = 19, type = "o", cex = 0.5, col = port.shorts.efficient.color)
+abline(v = 0.02, col = "springgreen", lty = 2)
+points(x = c(port.long.minvar$sd, port.long.tangency$sd), y = c(port.long.minvar$er, port.long.tangency$er), col = port.colors[1:2], pch = 4, cex = 2, lwd = 1.5)
+legend(x = "topright", legend = c(asset.names, "NSMINVAR Port", "NSTAN Port"), col = c(asset.colors, port.colors[1:2]), cex = 0.8, pch = 4)
