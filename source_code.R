@@ -3,12 +3,10 @@
 ############
 
 library(boot)
-library(captioner)
 library(corrplot)
 library(IntroCompFinR)
 library(knitr)
 library(lubridate)
-library(pander)
 library(PerformanceAnalytics)
 library(tseries)
 library(xlsx)
@@ -22,8 +20,6 @@ default.par <- par(no.readonly = TRUE)
 par(mgp = c(0, 1, 0), mar = c(4.5, 4, 1, 1), mfrow = c(1,1))
 
 # Captioner setup
-figures <- captioner(prefix = "Figure")
-tables <- captioner(prefix = "Table")
 
 
 ############
@@ -56,24 +52,21 @@ end.date <- "2016-06-30"
 ############################
 
 # Function to add a figure caption to figures object
-figures.add <- function (...) {
-	figures(..., display = FALSE)
-}
 
-# Function to add a table caption to tables object
+
 tables.add <- function (...) {
-	tables(..., display = FALSE)
-}
-
-# Function to cite a figure
-figures.cite <- function (figure.ref) {
-	figures(figure.ref, display = "cite")
+	NULL
 }
 
 # Function to cite a table
 tables.cite <- function (table.ref) {
-	tables(table.ref, display = "cite")
+	NULL
 }
+
+tables <- function (x) {
+	""
+}
+
 
 # Historic Price Gathering
 ############################
@@ -298,7 +291,6 @@ colnames(prices) <- asset.names
 # Plotting historical price data for each of hte ETFs
 ############
 
-figures.add(name = "time_plot_price", caption = "Timeplot of ETF prices")
 plot(prices, xlab = "Time", panel = panel.time.plots.dates, col = asset.colors, main = "")
 
 
@@ -337,7 +329,6 @@ for (i in seq_along(asset.names)) {
 ############
 
 plot(ret.z, xlab = "Time", panel = panel.time.plots, col = asset.colors, main = "")
-figures.add(name = "time_plot_returns", caption = "Timeplot of ETF continuously compounded returns")
 
 
 ############
@@ -346,7 +337,6 @@ figures.add(name = "time_plot_returns", caption = "Timeplot of ETF continuously 
 ############
 
 chart.CumReturns(ret.z, col = asset.colors, legend.loc = "topleft", wealth.index = TRUE, ylab = "Wealth ($)", xlab = "Time", main = "")
-figures.add(name = "time_plot_equity_curve", caption = "Growth of One Dollar Investment")
 
 
 ############
@@ -367,7 +357,6 @@ for (statistic in univariate.stats) {
 colnames(asset.univariate.stats) <- asset.names
 rownames(asset.univariate.stats) <- univariate.stats.names
 
-tables.add(name = "asset_univariate_stats", caption = "Univariate Statistics for each of the ETFs")
 kable(asset.univariate.stats, caption = tables("asset_univariate_stats"))
 
 
@@ -375,16 +364,14 @@ kable(asset.univariate.stats, caption = tables("asset_univariate_stats"))
 # Four panel plot for each ETF in the dataset
 ############
 
-figures.add(name = "graphical_descriptive_stats", caption = "Graphical Descriptve Statistics for Monthly CC Returns of ETFs")
 apply(ret.z, 2, fourPanelPlot)
 
 ############
 # ETF Returns single boxplot
 ############
 
-figures.add(name = "cc_returns_boxplot", caption = "Box Plot of CC Monthly Returns of the ETFs")
-ret.ordered <- apply(ret.df, 2, sort, method = "shell")
-boxplot(ret.ordered, width = rep(1,6), plot = TRUE, col = asset.colors, ylab = "Continuously Compounded Returns", xlab = "Exchange Traded Fund (ETF) Name")
+
+boxplot(ret.df, width = rep(1,6), plot = TRUE, col = asset.colors, ylab = "Continuously Compounded Returns", xlab = "Exchange Traded Fund (ETF) Name")
 
 
 ############
@@ -429,8 +416,7 @@ asset.se.mean.ci <- stat.ci.generator(asset.univar.stats$mean, asset.se.mean, 0.
 asset.se.mean.table <- data.frame(asset.univar.stats$mean, asset.se.mean, format.perc(asset.se.mean.perc), stat.ci.generator(as.numeric(asset.univar.stats$mean), as.numeric(asset.se.mean), 0.05))
 rownames(asset.se.mean.table) <- asset.names
 colnames(asset.se.mean.table) <- c("Mean", "Mean SE", "Mean SE (%)", "95% Confidence Interval")
-tables.add(name = "asset_mean_se", caption = "Standard Errors and Confidence Intervals for ETF Return Means")
-kable(asset.se.mean.table, caption = tables("asset_mean_se"))
+kable(asset.se.mean.table)
 
 # Computing SE and 95% CI of the SD
 asset.se.sd <- asset.univar.stats$sd / sqrt(N * 2)
@@ -439,8 +425,7 @@ asset.se.sd.perc <- asset.se.sd / asset.univar.stats$sd
 asset.se.sd.table <- data.frame(asset.univar.stats$sd, asset.se.sd, format.perc(asset.se.sd.perc), stat.ci.generator(as.numeric(asset.univar.stats$sd), as.numeric(asset.se.sd), 0.05))
 rownames(asset.se.sd.table) <- asset.names
 colnames(asset.se.sd.table) <- c("Std Dev", "Std Dev SE", "Std Dev SE (%)", "95% Confidence Interval")
-tables.add(name = "asset_sd_se", caption = "Standard Errors and Confidence Intervals for ETF Return Standard Deviations")
-kable(asset.se.sd.table, caption = table("asset_sd_se"))
+kable(asset.se.sd.table)
 
 
 ############
@@ -464,8 +449,7 @@ asset.univar.sr.table <- data.frame(asset.univar.sr, asset.univar.sr.boot.x, ass
 
 colnames(asset.univar.sr.table) <- c("Sharpe Ratio (A)", "Sharpe Ratio (B)", "Sharpe Ratio SE (B)", "Sharpe Ratio SE % (B)")
 rownames(asset.univar.sr.table) <- asset.names
-tables.add(name = "asset_sr_stats", caption = "Monthly Sharpe Ratios with Bootstrap-estimated Standard Errors (Key: A - Analytical, B - Bootstrap)")
-kable(asset.univar.sr.table, digits = 6, caption = tables("asset_sr_stats"))
+kable(asset.univar.sr.table, digits = 6)
 
 
 ############
@@ -485,15 +469,13 @@ asset.univar.a.table <- data.frame(asset.univar.a.mean, asset.univar.a.sd, asset
 colnames(asset.univar.a.table) <- c("Annualized Mean", "Annualized Std Dev", "Annualized Sharpe Ratio")
 rownames(asset.univar.a.table) <- asset.names
 
-tables.add(name = "asset_annualized_stats", caption = "Annualized Mean, Standard Deviation and Sharpe Ratios for the ETFs")
-kable(asset.univar.a.table, caption = tables("asset_annualized_stats"), digits = 6)
+kable(asset.univar.a.table, digits = 6)
 
 
 ############
 # Risk Return tradeoff graph
 ############
 
-figures.add(name = "asset_risk_return_tradeoff", caption = "Risk-Return Tradeoff for each of the ETFs")
 
 # Creating the plot
 plot(x = asset.univar.stats$sd, y = asset.univar.stats$mean, ylab = "Expected Return", xlab = "Standard Deviation", main = "", type = "n")
@@ -504,7 +486,7 @@ abline(h = 0, lty = 2, col = "lightsteelblue4")
 
 
 ############
-# Correlation Matirx
+# Correlation Matirx and Scatter Plots
 ############
 
 # Computing correlation matrix
@@ -512,9 +494,11 @@ rho.mat <- cor(ret.df)
 # Computing covariance matirx
 cov.mat <- cov(ret.df)
 
+# Plotting pair-wise scatter plots
+pairs(ret.df)
+
 # Plotting the correlation matrix
 corrplot.mixed(rho.mat, upper = "ellipse", col = colorRampPalette(c("white","cadetblue2", "cadetblue4"))(20), tl.col = asset.colors)
-figures.add(name = "asset_correlation_plot", caption = "Correlation Plot for the Cross Cross-Correlation between ETFs")
 
 # Displaying the correlation matrix
 tables.add(name = "asset_corelation_matrix", caption = "Cross-Correlation Matrix of ETFs")
@@ -596,7 +580,6 @@ for (i in seq(1, length(asset.names))) {
 }
 
 # Adding caption
-figures.add(name = "rolling_cer_parameters", caption = "Rolling CER Parameter Estimates with CC Returns of each ETF")
 
 # Resetting plot area
 par(default.par)
@@ -610,7 +593,6 @@ grid()
 abline(h = c(0, rho.mat["VFINX", "VBLTX"]), col = c("black", "brown2"), lty = c(1, 2))
 
 # Adding caption
-figures.add(name = "rolling_rho_vfinx_vbltx", caption = "Rolling Estimate of Correlation of VFINX and VBLTX")
 
 
 ############
@@ -622,7 +604,6 @@ port.shorts.minvar <- globalMin.portfolio(asset.univar.stats$mean, cov.mat)
 
 # Plotting portfolio weights
 port.weights.plot(port.shorts.minvar$weights)
-figures.add(name = "port_short_minvar_weights", caption = "Asset Weights of Global Minimum Variance Portfolio with Short Sales (SMINVAR)")
 
 # Creating table with portfolio stats
 port.shorts.minvar.table <- data.frame(port.stats(port.shorts.minvar$er, port.shorts.minvar$sd), annualize.stats(port.shorts.minvar$er, port.shorts.minvar$sd))
@@ -639,7 +620,6 @@ port.shorts.evfinx <- efficient.portfolio(asset.univar.stats$mean, cov.mat, targ
 
 # Plotting portfolio weights
 port.weights.plot(port.shorts.evfinx$weights)
-figures.add(name = "port_long_evfinx_weights", caption = "Asset Weights of the Efficient Portfolio with a Target Return equal to VFINX (EVFINX)")
 
 vfinx.stats <- asset.univar.stats["VFINX", ]
 port.shorts.evfinx.table <- data.frame(port.stats(port.shorts.evfinx$er, port.shorts.evfinx$sd), c(vfinx.stats$mean, vfinx.stats$sd, asset.univar.sr[1], asset.var.01[1], asset.var.05[1]))
@@ -671,7 +651,6 @@ port.shorts.tangency <- tangency.portfolio(asset.univar.stats$mean, cov.mat, ris
 
 # Plotting portfolio weights
 port.weights.plot(port.shorts.tangency$weights)
-figures.add("port_shorts_tangency", caption = "Asset Weights for the Tangency Portfolio allowing Short Sales (STAN)")
 
 # Creating table with portfolio stats
 port.shorts.tangency.table <- data.frame(port.stats(port.shorts.tangency$er, port.shorts.tangency$sd), annualize.stats(port.shorts.tangency$er, port.shorts.tangency$sd))
@@ -700,11 +679,9 @@ lines(x = port.shorts.efficient.sd, y = port.shorts.efficient.er, pch = 19, type
 points(x = c(port.shorts.minvar$sd, port.shorts.evfinx$sd, port.shorts.tangency$sd), y = c(port.shorts.minvar$er, port.shorts.evfinx$er, port.shorts.tangency$er), col = port.colors, pch = 4, cex = 2, lwd = 1.5)
 abline(h = port.shorts.evfinx$er, col = port.colors[2], lty = 2)
 legend(x = "topright", legend = c(asset.names, "SMINVAR Port", "EVFINX Port", "STAN Port"), col = c(asset.colors, port.colors), cex = 0.8, pch = 4)
-figures.add(name = "port_shorts_markowitz", caption = "Markowitz Bullet Generated by Efficient Portfolios with Shorts")
 lines(x = x, y = y, col = "yellow")
 
 # Clearing canvas
-figures.add(name = "port_shorts_markowitz", caption = "Markowitz Bullet Generated by Efficient Portfolios with Shorts")
 par(default.par)
 
 ##################################
@@ -714,7 +691,6 @@ port.long.minvar <- globalMin.portfolio(asset.univar.stats$mean, cov.mat, shorts
 
 # Plotting portfolio weights
 port.weights.plot(port.long.minvar$weights)
-figures.add(name = "port_long_minvar_weights", caption = "Asset Weights of Global Minimum Variance Portfolio without Short Sales (NSMINVAR)")
 
 # Creating table with portfolio stats
 port.long.minvar.table <- data.frame(port.stats(port.long.minvar$er, port.long.minvar$sd), annualize.stats(port.long.minvar$er, port.long.minvar$sd))

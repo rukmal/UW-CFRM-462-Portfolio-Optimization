@@ -35,6 +35,7 @@ The Vanguard Pacific Stock Index Fund ^[@VPACX:TheVanguardGroup:2016] (VPACX) is
 ## ETF Historical Prices
 
 ```{r time_plot_price, fig.cap = figures("time_plot_price")}
+figures.add(name = "time_plot_price", caption = "Timeplot of ETF prices")
 plot(prices, xlab = "Time", panel = panel.time.plots.dates, col = asset.colors, main = "")
 ```
 

@@ -18,10 +18,42 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(fig.path = "figures/", echo = FALSE, tidy = TRUE, tidy.opts=list(width.cutoff=70), warning = FALSE, message = FALSE)
 options(digits = 6)
+
 ```
 
 ```{r source_code, eval = TRUE, include = FALSE, echo = FALSE}
 source("source_code.R")
+
+# To force kable to output in latex format
+kable <- function(...) {
+    knitr::kable(...)
+}
+
+library(captioner)
+
+figures <- captioner(prefix = "Figure")
+tables <- captioner(prefix = "Table")
+
+figures.add <- function (...) {
+	figures(..., display = FALSE)
+}
+
+# Function to cite a figure
+figures.cite <- function (figure.ref) {
+	figures(figure.ref, display = "cite")
+}
+
+# Function to add a table caption to tables object
+tables.add <- function (...) {
+	tables(..., display = FALSE)
+}
+
+# Function to cite a table
+tables.cite <- function (table.ref) {
+	tables(table.ref, display = "cite")
+}
+
+
 ```
 
 ```{r child="report_resources/1_Title_Page.tex"}

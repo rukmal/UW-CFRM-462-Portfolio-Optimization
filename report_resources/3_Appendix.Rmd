@@ -8,7 +8,6 @@ output: pdf_document
 
 ```{r four_plot_summaries, result = "asis"}
 for (asset in asset.names) {
-	cat(asset, "Four Plot Panel Summary Charts")
 	figures.add(name = paste("asset_fourplotpanel_", asset, sep = ""), caption = paste("Four Plot Summary Chart Plot for", asset, "CC Returns"))
 	data <- ret.df[asset]
 	names(data) <- c(asset)
