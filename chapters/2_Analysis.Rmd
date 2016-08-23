@@ -7,13 +7,153 @@ output: pdf_document
 
 ## Continously Compounded Returns
 
-
-```{r time_plot_returns, fig.cap=figures("time_plot_returns")}
+```{r time_plot_returns, fig.cap = figures("time_plot_returns")}
 plot(ret.z, xlab = "Time", panel = panel.time.plots, col = asset.colors, main = "")
-figures.add(name = "time_plot_returns", caption = "Timeplot of ETF continuously compounded returns")
 ```
 
-```{r time_plot_equity_curve, fig.cap=figures("time_plot_equity_curve")}
-chart.CumReturns(ret.z, col = asset.colors, legend.loc = "topleft", wealth.index = TRUE, ylab = "Wealth ($)", xlab = "Time", main = "")
-figures.add(name = "time_plot_equity_curve", caption = "Growth of $1 investment")
+Using the price data from each of the ETFs, we are able to compute a series of *continuously compounded returns* for each ETF. A continuously compounded return (also known as a CC, geometric or log return) is calculated by computing the difference in the log price at each time period for a given asset. That is:
+
+\begin{gather*}
+	\text{Let $P_t$ and $P_{t - 1}$ be the price at time $t$ and $t-1$ respectively} \\
+	\text{Conventionally, a \textit{simple return} is defined as follows:} \\
+	R_{t} = \frac{P_t - P_{t - 1}}{P_{t - 1}} \\
+	\text{The \textit{continuously compounded return} is defined as:} \\
+	r_{t} = \log{\frac{P_t}{P_{t - 1}}} = \log{P_t} - \log{P_{t - 1}}
+\end{gather*}
+
+
+
+As seen in `r figures.cite("time_plot_returns")`, the graph displays the continuously compounded return at each point in time, for each asset. As seen in the graph, the monthly returns for each asset appear to be extremely jagged, or *volatile*. This is due to the constant price changes in any given asset, which is a consequence of operating in an open market.
+
+Due to the limiting nature of the `log` function, larger returns are often reduced in magnitude when compared to their arithmetic counterparts. This greatly increases the value of the data, as it appears to be better-behaved, and thus a better candidate for statistical evaluation. Furthermore, the additive properties of exponents and the logarithm mean that consecutive returns can be added to determine the return over a contiguous period of time. This is illustrated briefly below:
+
+
+\begin{gather*}
+	\text{For continuously compounded (geometric) returns, } (1 + R_2) = (1 + R_0) \times (1 + R_1) \\
+	\Rightarrow R_2 = (1 + R_0) \times (1 + R_1) - 1 = 1 + R_1 + R_0 + R_1 R_0 - 1 = R_1 + R_0 + R_1 R_0 \\
+	\text{However, in the case of simple returns, this would simply be:} R_2 = \frac{R_2 - R_0}{R_0} = \frac{R_2}{R_0} - 1 \\
+	\text{As illustrated, this would overlook the effect of the compounded term $R_1 R_0$,} \\
+	\text{which leads to an overstatement of returns in the long run.} \\
+	\\
+	\text{Furthermore generalizing the geometric returns further, they can be expressed as:} \\
+	\Rightarrow (1 + R_k) = (1 + R_0) \times (1 + R_1) \times (1 + R_2) \times \ldots \times (1 + R_{k -1}) = \prod_{i}^{k - 1} (1 + R_i) \\
+	\text{This result is extremely convenient, as the logarithm can be applied} \\
+	\text{to each side to reduce this to a simple sum:} \\
+	\therefore \log (1 + R_k) = \log \left( \prod_{i}^{k - 1} (1 + R_i)  \right) = \log (1 + R_0) + \log (1 + R_1) + \ldots + \log (1 + R_{k - 1}) \\
+	\text{This property does not overstate the return of an asset, while also making the process of} \\
+	\text{computing compunded returns mathematically trivial.}
+\end{gather*}
+
+
+This concept can be visualized further by considering the equity curve of each of the ETFs (see `r figures.cite("time_plot_equity_curve")`). The equity curve is a generalized method of gauging the performance of a fund, by appying its returns to a benchmark over $1, and viewing its progression over time. The curve is extremely telling, and reiterates the patterns observed in the price graphs of each of the ETFs. It is clear the VFINX has performed the best, yielding a tital return of approximately 70% over the course of the 5-year time horizon of the data. Similarly, it can also be observed that VEIEX performed the worse, with a neagtive return of nearly 25%. The volatility of returns of each of the assets can also be gauged from the equity curve, and it is a fitting precursor to the next section of this report.
+
+
+
+## Asset Distribution Analysis
+
+```{r returns_boxplot}
+boxplot(ret.ordered, width = rep(1,6), plot = TRUE, col = asset.colors, ylab = "Continuously Compounded Returns", xlab = "Exchange Traded Fund (ETF) Name")
 ```
+
+Modern financial theory perpetuates the notion that all asset returns are random, and that returns are not correlated asynchronously with their past or possible future performance. It is this assumption that has birthed the Constant Expected Return (CER) model, which is rooted in the belief that returns are serially uncorrelated.
+
+Despite this, the CER assumes that the series of past returns produced by a given asset are qunatifiable, and thus regressible. This means that as with any other stationary, ergodic and serially uncorrelated process, assumptions about future behavior may be inferred - but not determined - from past performance. Is is this notion that drives the analysis of financial data, as characteristics of past performance are identified and used to determine possible patterns of future progression.
+
+Referring to the four plot summary charts prepared for each of the return distributions in Appendix A, the returns appear to be mostly normally distributed. This is to be expected, as the law of large numbers states that any repeatedly-sampled dataset will tend towards the normal distribution with time. In all of the datasets, the relationship will the normal distribution appears to be extremely strong towards the middle of the distribution of returns, as evidenced by the mostly-linear behavior of their Normal Q-Q plots near the median of the dataset. However, in the case of VEURX, VEIEX, VPACX and VBISX, this normality breaks down quickly at the tails of the distribution. Although this may seem like a letdown, it is to be expected, as extreme results are often more common and more extreme than predicted by the normal distribution in practice.
+
+It apears that the returns of VBLTX has the most normal-esque distribution, as it displays the most linear shape on the Q-Q plot, as well as having the most symmetric histogram, and no outliers on its box plot. These observations can be scrutinized further by analyzing the descriptive statistics of each of the samples, as displayed below:
+
+```{r asset_univariate_stats}
+kable(asset.univariate.stats, caption = tables("asset_univariate_stats"))
+```
+
+Analyzing the table above, it is clar that the sample statsitics confirm the VEIEX was indeed the worst performer in this category, as evidenced by its negative mean return. Additionally, it can also be confimed that it was also the most volatile, as evidenced by its relatively high standard deviation of returns. The unique shapes of each of the histograms displayed in Appendix A too can be explained by the statistics in `r tables.cite("asset_univariate_stats")`. The negative skewness of VFINX, VEURX, VEIEX and VPACX all indicate that despite an overall positive performance, their returns were battered with large periods of highly negative returns, as seen in the timplots of the price of the assets.
+
+A comparison of the skewness and excess kurtosis displayed by each of the distributions would indicate that VBLTX had the most normally distributed returns, as confirned by its highly linear normal Q-Q plot, and highly symmetric boxplot, as seen in figure. Furthermore, the extreme lack of a centered median in the case of VEURX and VBISX, as they both have skewness values that are far from the Gaussian reference's 0. Considering the excess kurtosis of each of the distributions, it is indicative of VEIEX having an extremely thin distribution, which is highly plausible, as it had the least absolute change in value over the time horizon of the project, which would indicate that the majority of its positive returns would have been negated by the negative.
+
+
+## Precision of Estimators
+
+```{r se_tables}
+kable(asset.se.mean.table, caption = tables("asset_mean_se"))
+kable(asset.se.sd.table, caption = tables("asset_sd_se"))
+```
+
+Despite the fact that we may now feel confident in our analysis of the worthiness of a partiuclar asset as a suitable investment vehicle, this is far from the truth. Going back to the core principle that these returns are in fact random, and that we are merely attempting to discern a pattern is a powerful notion, as reflected by the exterme standard errors of estimation in both the means and standard deviations of returns analyzed previously.
+
+In the case of the mean returns in particular, the large standard deviations and small sample size considered have an extremely detrimental effect on the outlook of the inferences made in the initial analysis. In the case of two securities, VEURX and VPACX, the 95% confidence interval as determined by the standard error of the mean sees the average return going into the red. Further, in the case of VFINX - supposedly the most promosing of the ETFs analyze thus far in term of return - too is just 6 basis points from being negative.
+
+As these standard errors were computed using the analytic equations for the standard error of the mean and standard deviation however, they are self-determinant. This is evident from the constant percentage of standard error across all of the standard deviations of returns, which would not be the case if the population of returns were to be sampled repeatedly, and the extreme values observed in `r tables.cite("asset_mean_se")` and `r tables.cite("asset_sd_se")` may be due to a false assumption that the underlying distribution of the means and standard deviations are indeed normal, compounded by the fact only a relatively small smaple size (N = `r N`) was being considered.
+
+However, despite possible shortcoming that may have caused the large confidence intervals, it is still apparent that the only securities to have displayed a stable - albeit slight - positive rate of return are VFINX, VBLTX and VBISX.
+
+## Risk-Adjusted Return
+
+As evidenced by the amazingly volatility observed above, any exposure to a potential large return is accompanied with a proortional level of risk. This is what is commonly referred to as the *risk-return tradeoff*. Thus, a better measure of gauging an asset's performance would be highly valuable, as a blind evaluation of one aspect (expected return or volatility) without regard to the other is baseless.
+
+The current standard for this type of measurement is *risk-adjusted return*. Risk-adjusted return, which is the notion of measuring the amount of potential returns an asset can provide, relative to the amount of exposure to risk it is undertaking can be measured in multiple forms. However, one of the leading insudtry standards is the *Sharpe Ratio*, which measures the amount of expected return offered by a particular investment, taking into account the prevailing return that is available without any risk (i.e. risk-free asset), per unit of risk, which is measure by standard deviation of returns. The equation for the Sharpe Ratio is:
+
+\begin{gather*}
+	\text{Sharpe Ratio, SR} = \frac{\text{E[$r$]} - r_f}{\sigma}
+\end{gather*}
+
+By considering both the level of potential returns from an investment along with the risk it presents, the Sharpe Ratio effectively quantifies the risk-return tradeoff, and is used across the industry to rank the value of investments. This relationship is perhaps best illustrated on a plot of an investment's risk versus return, as see in `r figures.cite("asset_risk_return_tradeoff")` This is not to say however, that it is the final judge of a measurement, as every investor's level of risk aversion varies, and thus an investment that may seem extremely to one individual may be one that would never be considered by another.
+
+### The Bootstrap
+
+As illustrated by the large confidence intervals in the return of each of the ETFs in `r tables("asset_mean_se")`, having a good understanding of the precision of an investment is equally important to having a measurement at all. Thus, the bootstrap technique of gauging the standard error of an estimator will be used to measure the standard error of our calculation of the Sharpe Ratio for each asset.
+
+The Bootstrap method is derived from the notion that any sample, from an existing sample of a population, is reperesentative of the underlying distribution of the population itself. This is similar to the approach taken by us when attempting to approximate characteristics about a population from a sample, except this train of thought extends those notions to samples from the original population as well.
+
+Firstly, advocates of this method justify the risk of bias from the sample it would be gathering data from by arguing that significantly fewer generalizations are made about the distribution of the underlying population when compared to other analytical approaches. A perfect example of this is our assumption that the means of the assets are normally distributed, which was crucial to calculating standard errors and confidence intervals above. Second, this method is also thought to be - in general - more accurate than the analytical assumptions of normality (as per the Central Limit Theorem) that are often made when conducting statistical analyses. Third, this procedure is generally easier to perform, as it is the same regardless of the quantity beign estimated, which is in stark contrast to the wide range of formulas generally used to infer statistics about a population.
+
+The Bootstrap is performed using computer intensive resampling with replacement of a sample data set, calculating the desired estimator for each of these *samples of samples*, and then finally constructing a distribution of the quantity being estimated from the hundreds or thousands of samples taken by the computer. This is then assumed to be an accurate representation of the distribution of the estimator in the underlying population, as per the original assumption that the initial sample accurately reflects that population.
+
+Whiile this method is exposed to the obvious risk of a biased sample from which it will sample data thousands of times, it has many advantages over traditional analytic assumptions of normality about data that are typically made during statistical analysis. One major benefit of quantitatively intensive statistical tenchiques such as the Bootstrap is that the sampled data will undoubtedly reflect the true distribution of the sample; which extends to the population if the underlying assumption about the neutrality of the orignal sample is correct. This, coupled with the simple implementation and high rate of repetition make this method particularly attractive for statistical analysis.
+
+### Bootstrapped Sharpe Ratio
+
+```{r sharpe_ratio_table}
+kable(asset.univar.sr.table, digits = 6, caption = tables("asset_sr_stats"))
+```
+
+The bootstrapped values in the table above were calculated by resampling the initial data `r sims` times, for each ETF in the dataset. This high rate of sampling, coupled with the small size of the data set (N = `r N`) would have contributed to the fact that the Bootsrtap-estimated Sharpe Ratio convereged perfectly to the value of the analytical formula.
+
+This high sampling rate provided an extremely good sense of a possible distribution of the Sharpe Ratio of the underlying population, assuming that the sample that we in turn sampled was an accurate reflection of the population it was representing. Despite the bootstrapping process, the Sharpe Ratios have similarly high estimation erros associated with them. This may be attributed to the small sample size of our data, and the face that that Sharpe Ratio is a determinant of two unknow (i.e. risky) quantities, which would result in it inhereting the risk factors of both of its determinants, the mean and standard deviation, which were extremely volatile to begin with.
+
+The bootstrapped standard errors reflect these assumptions well, as the securities that had returns with a lower volatility have a significantly lower standard error of measurement of its Sharpe Ratio compared to the securities that had fatter-tailed distributions. In the case of VEURX, VEIEX and VPACX, the extremely high relative Sharpe Ratio SEs may be due to the shape of the distribution of their distribution in the time horizon of the project. We know from the histograms and the timeplots of the price that the three securities experienced intense fluctionations, and would thus have numerous extreme values at both ends of its distribution, resulting in a large estimation error.
+
+Consirting the rank of the ETFs, it is clear that VBLTX, VFINX and VBISX provide the best risk-adjusted standalone investment opportunies. It is hard to make a distinction betond this, as they all have similar levels of estimation error associated with their respective Sharpe Ratios. This is contrasted with VEIEX, which, with a negative Sharpe Ratio definitely provides the worse opportunity for direct investment. Second, the extremely high estimation error of VEURX's low Sharpe Ratio of `r asset.univar.sr[2]` should raise concerns, as it is within one standard deviation of measurement to being negative.
+
+```{r risk_return_tradeoff, fig.cap = figures("asset_risk_return_tradeoff")}
+plot.risk.return()
+legend(x = "topleft", legend = asset.names, col = asset.colors, cex = 0.8, pch = 4)
+```
+
+
+## Annualization and Correlation Analysis
+
+### Annualization
+
+```{r equity_curve, fig.cap = figures("time_plot_equity_curve")}
+chart.CumReturns(ret.z, col = asset.colors, legend.loc = "topleft", wealth.index = TRUE, ylab = "Wealth", xlab = "Time", main = "")
+```
+
+Due to the fact that continuously compounded returns were employed in this analysis, annualizing the sample statistics and risk-adjusted return does not add any immediate value to the analysis. This is evidenced by the data in `r tables("asset_annualized_stats")`, as the measure of risk-adjusted return, the Sharpe Ratio reaffirms the observations made with the monthly Sharpe Ratios. This is attributable to the fact that while not in equal proportions, all of the factors that contribute to the Sharpe Ratio are scaled up by the same, non-parametric amount. The monthly expected returns and risk free rate would be multiplied by $12$ to simply account for the 12 months of extra compounding they would be able to undergo, and the standard deviations would be scaled up by $\sqrt{12}$. This finally leads to a scaling factor of $\sqrt{12}$ for the Sharpe Ratio, which would not change the rankings of any of the assets.
+
+```{r assets_annualized_stats}
+kable(asset.univar.a.table, caption = tables("asset_annualized_stats"), digits = 6)
+```
+
+This compounding factor is illustrated by the simple additive property of continuously compounded returns. Consdier the following, where the annual and monthly average return on VFINX can be reconciled perfectly to explain the return of a $1 investment in 5 years:
+
+\begin{gather*}
+	\text{Monthly average CC return on VFINX} = `r asset.univar.stats$mean[1]` \\
+	\text{Yearly average CC return on VFINX} = `r asset.univar.a.mean[1]` \\
+	\\
+	\Rightarrow \text{Return in 5 years} = `r asset.univar.stats$mean[1]` \times 60 \text{ months} = \doubleu{ `r asset.univar.stats$mean[1] * 60` } \\
+	\Rightarrow \text{Return in 5 years} = `r asset.univar.a.mean[1]` \times 5 \text{ years} = \doubleu{ `r asset.univar.a.mean[1] * 5` } \\
+	\\
+	\therefore \text{Value of \$1 in 5 years} = \$1 \times \exp{`r asset.univar.stats$mean[1] * 12`}
+	= \doubleu{`r exp(asset.univar.stats$mean[1] * 60)`} = \text{Value of \$1 in 5 years (see `r figures.cite("time_plot_equity_curve")` )}
+\end{gather*}

@@ -8,6 +8,7 @@ library(corrplot)
 library(IntroCompFinR)
 library(knitr)
 library(lubridate)
+library(pander)
 library(PerformanceAnalytics)
 library(tseries)
 library(xlsx)
@@ -142,7 +143,7 @@ stat.ci.print <- function (interval, digits = 6) {
 stat.ci.generator <- function (mean, sd, ci, digits = 6) {
 	lower <- mean - sd * qnorm(ci / 2)
 	upper <- mean + sd * qnorm(ci / 2)
-	stat.ci.print(c(lower, upper), digits)
+	apply(cbind(lower, upper), 1, stat.ci.print, digits)
 }
 
 # Function to format a percentage to a given number of digits, given a decimal percentage
@@ -345,7 +346,7 @@ figures.add(name = "time_plot_returns", caption = "Timeplot of ETF continuously 
 ############
 
 chart.CumReturns(ret.z, col = asset.colors, legend.loc = "topleft", wealth.index = TRUE, ylab = "Wealth ($)", xlab = "Time", main = "")
-figures.add(name = "time_plot_equity_curve", caption = "Growth of $1 investment")
+figures.add(name = "time_plot_equity_curve", caption = "Growth of One Dollar Investment")
 
 
 ############
@@ -367,7 +368,7 @@ colnames(asset.univariate.stats) <- asset.names
 rownames(asset.univariate.stats) <- univariate.stats.names
 
 tables.add(name = "asset_univariate_stats", caption = "Univariate Statistics for each of the ETFs")
-kable(asset.univariate.stats, caption = tables.cite("asset_univariate_stats"))
+kable(asset.univariate.stats, caption = tables("asset_univariate_stats"))
 
 
 ############
@@ -423,21 +424,22 @@ colnames(asset.univar.stats) <- c("mean", "var", "sd", "eskew", "kurt")
 # Computing SE and 95% CI of the mean
 asset.se.mean <- asset.univar.stats$sd / sqrt(N)
 asset.se.mean.perc <- asset.se.mean / asset.univar.stats$mean
+asset.se.mean.ci <- stat.ci.generator(asset.univar.stats$mean, asset.se.mean, 0.95)
 # Creating and formatting mean SE table, with CI and percentage SE
-asset.se.mean.table <- data.frame(asset.univar.stats$mean, asset.se.mean, format.perc(asset.se.mean.perc), stat.ci.generator(asset.univar.stats$mean, asset.se.mean, 0.05))
+asset.se.mean.table <- data.frame(asset.univar.stats$mean, asset.se.mean, format.perc(asset.se.mean.perc), stat.ci.generator(as.numeric(asset.univar.stats$mean), as.numeric(asset.se.mean), 0.05))
 rownames(asset.se.mean.table) <- asset.names
 colnames(asset.se.mean.table) <- c("Mean", "Mean SE", "Mean SE (%)", "95% Confidence Interval")
 tables.add(name = "asset_mean_se", caption = "Standard Errors and Confidence Intervals for ETF Return Means")
-kable(asset.se.mean.table, caption = table("asset_mean_se"))
+kable(asset.se.mean.table, caption = tables("asset_mean_se"))
 
 # Computing SE and 95% CI of the SD
 asset.se.sd <- asset.univar.stats$sd / sqrt(N * 2)
 asset.se.sd.perc <- asset.se.sd / asset.univar.stats$sd
 # Creating and formatting SD SE table with CI and percentage SE
-asset.se.sd.table <- data.frame(asset.univar.stats$sd, asset.se.sd, format.perc(asset.se.sd.perc), stat.ci.generator(asset.univar.stats$sd, asset.se.sd, 0.05))
+asset.se.sd.table <- data.frame(asset.univar.stats$sd, asset.se.sd, format.perc(asset.se.sd.perc), stat.ci.generator(as.numeric(asset.univar.stats$sd), as.numeric(asset.se.sd), 0.05))
 rownames(asset.se.sd.table) <- asset.names
 colnames(asset.se.sd.table) <- c("Std Dev", "Std Dev SE", "Std Dev SE (%)", "95% Confidence Interval")
-tables.add(name = "asset_se_se", caption = "Standard Errors and Confidence Intervals for ETF Return Standard Deviations")
+tables.add(name = "asset_sd_se", caption = "Standard Errors and Confidence Intervals for ETF Return Standard Deviations")
 kable(asset.se.sd.table, caption = table("asset_sd_se"))
 
 
@@ -460,10 +462,10 @@ asset.univar.sr.boot.perc <- asset.univar.sr.boot.se / asset.univar.sr.boot.x
 
 asset.univar.sr.table <- data.frame(asset.univar.sr, asset.univar.sr.boot.x, asset.univar.sr.boot.se, format.perc(asset.univar.sr.boot.perc))
 
-colnames(asset.univar.sr.table) <- c("Sharpe Ratio (A)", "Sharpe Ratio (B)", "Sharpe Ratoio SE (B)", "Sharpe Ratio SE % (B)")
+colnames(asset.univar.sr.table) <- c("Sharpe Ratio (A)", "Sharpe Ratio (B)", "Sharpe Ratio SE (B)", "Sharpe Ratio SE % (B)")
 rownames(asset.univar.sr.table) <- asset.names
 tables.add(name = "asset_sr_stats", caption = "Monthly Sharpe Ratios with Bootstrap-estimated Standard Errors (Key: A - Analytical, B - Bootstrap)")
-kable(asset.univar.sr.table)
+kable(asset.univar.sr.table, digits = 6, caption = tables("asset_sr_stats"))
 
 
 ############
@@ -483,8 +485,8 @@ asset.univar.a.table <- data.frame(asset.univar.a.mean, asset.univar.a.sd, asset
 colnames(asset.univar.a.table) <- c("Annualized Mean", "Annualized Std Dev", "Annualized Sharpe Ratio")
 rownames(asset.univar.a.table) <- asset.names
 
-tables.add(name = "asset_annualized_stats", caption = "Annualized Mean, Standard Deviation and Sharpe Return for the ETFs")
-kable(asset.univar.a.table)
+tables.add(name = "asset_annualized_stats", caption = "Annualized Mean, Standard Deviation and Sharpe Ratios for the ETFs")
+kable(asset.univar.a.table, caption = tables("asset_annualized_stats"), digits = 6)
 
 
 ############

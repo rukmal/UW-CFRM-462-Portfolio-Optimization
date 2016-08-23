@@ -16,8 +16,12 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, tidy = TRUE, tidy.opts=list(width.cutoff=70), warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(fig.path = "figures/", echo = FALSE, tidy = TRUE, tidy.opts=list(width.cutoff=70), warning = FALSE, message = FALSE)
 options(digits = 6)
+```
+
+```{r source_code, eval = TRUE, include = FALSE, echo = FALSE}
+source("source_code.R")
 ```
 
 ```{r child="report_resources/1_Title_Page.tex"}
@@ -35,63 +39,6 @@ options(digits = 6)
 
 \newpage
 \pagenumbering{arabic}
-
-```{r init}
-library(boot)
-library(captioner)
-library(IntroCompFinR)
-library(knitr)
-library(lubridate)
-library(PerformanceAnalytics)
-library(tseries)
-library(xlsx)
-
-# Plot region setup
-par(mgp = c(0, 0, 0), mar = c(0,0,0,0), mfrow = c(1,1))
-
-# Captioner setup
-figures <- captioner(prefix = "Figure")
-tables <- captioner(prefix = "Table")
-
-# Constants
-asset.names <- c("VFINX", "VEURX", "VEIEX", "VBLTX", "VBISX", "VPACX")
-asset.colors <- c("lightcyan4", "lightcoral", "lightseagreen", "lightskyblue", "lightsalmon", "lightslateblue")
-export.pricedata.name <- "price_data.xlsx"
-
-# Macroeconomic Events
-dates.macro <- c(decimal_date(ymd("2012-04-15")), decimal_date(ymd("2015-08-21")))
-names(dates.macro) <- c("Europe Credit Crisis", "China Stock Market Crash")
-dates.macro.colors <- c("steelblue3", "violetred2")
-```
-
-```{r helpers}
-# Function to add a figure caption to figures object
-figures.add <- function (...) {
-    figures(..., display = FALSE)
-}
-
-# Function to add a table caption to tables object
-tables.add <- function (...) {
-    tables(..., display = FALSE)
-}
-
-# Function to cite a figure
-figures.cite <- function (figure.ref) {
-    figures(figure.ref, display = "cite")
-}
-
-# Function to cite a table
-tables.cite <- function (table.ref) {
-    tables(table.ref, display = "cite")
-}
-
-# Function to get adjusted close prices from online services
-# See ??get.hist.quote for more info/options
-get.adjclose <- function (instrument, interval, start = "1800-01-01", end = Sys.date()) {
-	prices <- get.hist.quote(instrument = instrument, quote = c("AdjClose"), start = start, end = end, compression = interval, retclass = "zoo")
-	prices
-}
-```
 
 ```{r child="chapters/1_Introduction.Rmd"}
 ```
