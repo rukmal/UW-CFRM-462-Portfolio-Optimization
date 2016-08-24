@@ -4,6 +4,7 @@
 \usepackage{bm}
 \usepackage{caption}
 \usepackage{enumerate}
+\usepackage{fancyhdr}
 \usepackage[hang, bottom]{footmisc}
 \usepackage{graphicx}
 \usepackage{hyperref}
@@ -18,6 +19,26 @@
 \allowdisplaybreaks[1]
 \setlength{\footnotemargin}{1em}
 \captionsetup{labelformat = empty}
+
+% Header and footer
+%=====================
+\pagestyle{fancy}
+
+% Clearing header and footer
+\fancyhead{}
+\fancyfoot{}
+
+% Header
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[R]{Rukmal Weerawarana}
+\fancyhead[L]{\nouppercase{\leftmark}}
+
+% Footer
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[L]{University of Washington}
+\fancyfoot[C]{CFRM 462}
+\fancyfoot[R]{\thepage}
+
 
 \newcommand{\doubleu}[1]{\underline{\underline{#1}}}
 \newcommand{\ddx}[1]{\frac{d}{dx} \bigg( #1 \bigg)}

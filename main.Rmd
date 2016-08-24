@@ -93,5 +93,9 @@ nocite: |
     @IntroCompFinAndFinEconometrics:EricZivot:2016
 ---
 
+\newpage
 
-# References
+\sloppy
+\addcontentsline{toc}{chapter}{References}
+\section*{References}
+\markboth{References}{}

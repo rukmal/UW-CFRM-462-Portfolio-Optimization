@@ -1,0 +1,9 @@
+---
+output: pdf_document
+---
+
+# Sample Asset Allocation
+
+## Introduction
+
+Taking into consideration the observations made about the types of portfolios that can be constructed with the ETFs, even when restricted by certain constraints, we can begin to construct sample portfolios that may be employed in a 401(k) fund.
