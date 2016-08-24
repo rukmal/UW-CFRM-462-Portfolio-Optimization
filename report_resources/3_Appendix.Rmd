@@ -6,12 +6,12 @@ output: pdf_document
 
 # Four Plot Summaries of the ETF CC Returns
 
-```{r four_plot_summaries}
+```{r four_plot_summaries, comment=NA}
 for (asset in asset.names) {
 	figures.add(name = paste("asset_fourplotpanel_", asset, sep = ""), caption = paste("Four Plot Summary Chart Plot for", asset, "CC Returns"))
 	data <- ret.df[asset]
 	names(data) <- c(asset)
 	fourPanelPlot(data)
-	# cat(" ")
+	knit(text = "\n", output = stdout(), quiet = TRUE)
 }
 ```

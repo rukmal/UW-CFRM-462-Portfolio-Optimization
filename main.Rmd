@@ -83,6 +83,9 @@ tables.cite <- function (table.ref) {
 ```{r child="chapters/5_Portfolio_Theory.Rmd"}
 ```
 
+```{r child="chapters/6_Asset_Allocation.Rmd"}
+```
+
 \newpage
 
 ```{r child="report_resources/3_Appendix.Rmd"}

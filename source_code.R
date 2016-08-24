@@ -7,6 +7,7 @@ library(corrplot)
 library(IntroCompFinR)
 library(knitr)
 library(lubridate)
+library(pander)
 library(PerformanceAnalytics)
 library(tseries)
 library(xlsx)
@@ -18,8 +19,6 @@ library(xlsx)
 # Plot region setup
 default.par <- par(no.readonly = TRUE)
 par(mgp = c(0, 1, 0), mar = c(4.5, 4, 1, 1), mfrow = c(1,1))
-
-# Captioner setup
 
 
 ############
@@ -732,3 +731,19 @@ lines(x = port.shorts.efficient.sd, y = port.shorts.efficient.er, pch = 19, type
 abline(v = 0.02, col = "springgreen", lty = 2)
 points(x = c(port.long.minvar$sd, port.long.tangency$sd), y = c(port.long.minvar$er, port.long.tangency$er), col = port.colors[1:2], pch = 4, cex = 2, lwd = 1.5)
 legend(x = "topright", legend = c(asset.names, "NSMINVAR Port", "NSTAN Port"), col = c(asset.colors, port.colors[1:2]), cex = 0.8, pch = 4)
+
+
+##############################################
+
+# Computing 6% target return portfolio
+port.long.target6 <- efficient.portfolio(asset.univar.stats$mean, cov.mat, target.return = 0.005, shorts = FALSE)
+
+# Plotting portfolio weights
+port.weights.plot(port.long.target6$weights)
+
+
+port.long.target6.table <- data.frame(port.stats(port.long.target6$er, port.long.target6$sd), annualize.stats(port.long.target6$er, port.long.target6$sd))
+port.long.target6.table <- format.port.table(port.long.target6.table)
+
+tables.add(name = "port_long_target6_stats", caption = "Descriptive Statistics for the Efficient Portfolio with an Annual Expected Return of 6% not allowing Short Sales")
+kable(port.long.target6.table, digits = 6, caption = tables.cite("port_long_target6_stats"))

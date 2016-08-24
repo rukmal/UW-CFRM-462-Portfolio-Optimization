@@ -7,3 +7,39 @@ output: pdf_document
 ## Introduction
 
 Taking into consideration the observations made about the types of portfolios that can be constructed with the ETFs, even when restricted by certain constraints, we can begin to construct sample portfolios that may be employed in a 401(k) fund.
+
+To develop an intuition of possible 401(k) portfolios, we will compute and compare two portfolios, on with a target annual expected return of 6% per year, which corresponds to 0.5% per month, and another that has an expected return of 12% per year, which corresponds to 1% per month.
+
+However, recalling the properties of portfolios that do not allow short sales, an important observation can be made regarding the viability of a 12% yearly return portfolio. Given the fact that only the ETFs can be used, and that the short sale of assets is not permitted, the maximum possible return that may be achieved from constructing a portfolio with the ETFs would be equal to the maximum expected return of the individual ETFs (VFINX, $E[r] = `r asset.univar.stats$mean[1]`). This notion is visualized in the risk-return graph depicting the efficient frontier of portfolios disallowing short sales, `r figures.cite("port_long_markowitz")`. Thus, it is not possible to construct an efficient portfolio with an expected return of 12% per year, given the constraints presented.
+
+## 6% Target Annual Expected Return Portfolio
+
+The 6% target annual expected return portfolio similarly to how the VFINX return equivalent portfolio was constructed in the previous section. However, as this portfolio is intended to be 401(k) compliant, we must add an extra constraint, to reflect the fact that short sales are not allowed (i.e. all asset weights must be positive).
+
+\begin{gather*}
+	\min_{\mathbf{x}} \sigma_p = \mathbf{x}^\intercal \times \boldsymbol{\Sigma} \times \mathbf{x} \\
+	\text{subject to } \mathbf{x}^\intercal \cdot \mathbf{1} = 1 \\
+	\boldsymbol{\mu} \cdot \mathbf{x} = 0.005 \\
+	\mathbf{x_i} > 0 , \,\, \forall \, i
+\end{gather*}
+
+
+`r figures.cite("port_long_target6_weights")` illustrates the asset weights that comprise an efficient portfolio that would deliver an annual expected return of 6%. Note that the assets that had the highest variablility, and lowest Sharpe ratios are excluded from the portfolio, while the assets that had the best risk-return tradeoffs are invested in heavily.
+
+```{r port_long_target6_weights, fig.cap = figures("port_long_target6_weights")}
+figures.add(name = "port_long_target6_weights", caption = "Asset Weights of an Efficient Portfolio with a Target Annual Expected Return of 6% not allowing Short Sales")
+port.weights.plot(port.long.target6$weights)
+```
+
+Furthermore, `r tables.cite("port_long_target6_stats")` displays monthly and annual descriptive statistics for an efficient portfolio with an expected return of 6% per year. As expected, both the monthly and annual expected returns indicate that the portfolio matches the specification of the initial optimization. Additionally, it also provides a significantly higher Sharpe ratio compared to any of the assets. What is most striking however, is the extremely low annual standard deviation of returns in the annual timeframe. The low standard deviation results in an extremely low VaR for the portfolio at both the 1% and 5% levels of risk.
+
+```{r port_long_target6_stats}
+tables.add(name = "port_long_target6_stats", caption = "Descriptive Statistics for the Efficient Portfolio with an Annual Expected Return of 6% not allowing Short Sales")
+kable(port.long.target6.table, digits = 6, caption = tables("port_long_target6_stats"))
+```
+
+## Considerations and Conclusion
+
+At the beginning of this section, we set out to calculate portfolios that would satisfy some of the regulatory constraints that are required of 401(k) portfolios. Unfortunately, due to the no short sales constraint imposed on 401(k) portfolios, a cap is imposed on the maximum possible return of a 401(k) portfolio, limiting it to the maximum expected return of the assets being considered, at which point the portfolio would simply be a holding in that particular asset.
+
+What must be absorbed from this analysis however, is the simple applicability and extensibility of portfolio theory, and that quantitative measures that are derived for a given security are only as reliable as the estimators themselves. Finally, what can be truly appreciated is the benefit of diversification, as demonstrated by all of the portfolios computed throughout the report, as each one offered a higher Sharpe ratio than the pure-asset alternative.

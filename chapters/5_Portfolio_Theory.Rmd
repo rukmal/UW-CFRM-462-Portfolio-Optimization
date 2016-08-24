@@ -92,7 +92,7 @@ port.weights.plot(port.shorts.tangency$weights)
 The resulting asset weights from this optimization can be seen in `r figures.cite("port_shorts_tangency_weights")`. Also, `r tables.cite("port_shorts_tangency_stats")` displays both monthly and annualized descriptive statistics calculated for the tangency portfolio. Looking at the table, both the monthly and annualized Sharpe ratios of this portfolio are significantly higher than any of the assets, with it being nearly three times higher the highest one displayed by any of the ETFs (VBLTX, SR `r asset.univar.sr[4]`).
 
 ```{r port_shorts_tangency_stats}
-tables.add(name = "port_shorts_tangency_stats", caption = "Monthly and Annualized Descriptive Statistics for the Tangency Portfolio allowing Short Sales (STAN)")
+tables.add(name = "port_shorts_tangency_stats", caption = "Descriptive Statistics for the Tangency Portfolio allowing Short Sales (STAN)")
 kable(port.shorts.tangency.table, digits = 6, caption = tables("port_shorts_tangency_stats"))
 ```
 
@@ -147,7 +147,7 @@ The asset weights of the resulting portfolio are displayed in `r figures.cite("p
 In addition to having significantly higher risk, there is almost no benefit of using this portfolio, as it is nearly almost composed of a single asset, VBLTX and has nearly identical expected return, which would be well within the bounds of estimation error for that asset. It also has a lower Sharpe ratio compared to the portfolio allowing short sales, which confirms that it is not as risk-efficient. The loss of the ability to short sell assets is particularly pronounced in the levels of VaR of each of the portfolios, as the no-shorts minimum variance portfolio has a VaR at risk that is sometimes four times that of its short-selling counterpart.
 
 ```{r port_long_minvar_stats}
-tables.add(name = "port_long_minvar_stats", caption = "Monthly and Annualized Descriptive Statistics for the Global Minimum Variance Portfolio not allowing Short Sales (NSMINVAR)")
+tables.add(name = "port_long_minvar_stats", caption = "Descriptive Statistics for the Global Minimum Variance Portfolio not allowing Short Sales (NSMINVAR)")
 kable(port.long.minvar.table, digits = 6, caption = tables("port_long_minvar_stats"))
 ```
 
@@ -167,7 +167,7 @@ port.weights.plot(port.long.tangency$weights)
 ```
 
 ```{r port_long_tangency_stats}
-tables.add(name = "port_long_tangency_stats", caption = "Monthly and Annualized Descriptive Statistics for the Global Minimum Variance Portoflio not allowing Short Sales (NSTAN)")
+tables.add(name = "port_long_tangency_stats", caption = "Descriptive Statistics for the Global Minimum Variance Portoflio not allowing Short Sales (NSTAN)")
 kable(port.long.tangency.table, digits = 6, caption = tables("port_long_tangency_stats"))
 ```
 
