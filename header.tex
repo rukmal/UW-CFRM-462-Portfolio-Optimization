@@ -19,6 +19,7 @@
 \allowdisplaybreaks[1]
 \setlength{\footnotemargin}{1em}
 \captionsetup{labelformat = empty}
+\footskip 35pt
 
 % Header and footer
 %=====================
@@ -27,7 +28,6 @@
 % Clearing header and footer
 \fancyhead{}
 \fancyfoot{}
-\footskip 35pt
 % Header
 \renewcommand{\headrulewidth}{0.4pt}
 \fancyhead[LE,RO]{Rukmal Weerawarana}
@@ -36,9 +36,27 @@
 
 % Footer
 \renewcommand{\footrulewidth}{0.4pt}
-\fancyfoot[RE,LO]{University of Washington}
+\fancyfoot[RE,LO]{UW}
 \fancyfoot[C]{CFRM 462}
 \fancyfoot[LE,RO]{\thepage}
+
+
+\fancypagestyle{plain}{
+	% Clearing header and footer
+	\fancyhead{}
+	\fancyfoot{}
+	% Header
+	\renewcommand{\headrulewidth}{0.4pt}
+	\fancyhead[LE,RO]{Rukmal Weerawarana}
+	\fancyhead[C]{401(k) Portfolio Optimization}
+	\fancyhead[RE,LO]{\nouppercase{\leftmark}}
+
+	% Footer
+	\renewcommand{\footrulewidth}{0.4pt}
+	\fancyfoot[RE,LO]{UW}
+	\fancyfoot[C]{CFRM 462}
+	\fancyfoot[LE,RO]{\thepage}
+}
 
 
 \newcommand{\doubleu}[1]{\underline{\underline{#1}}}

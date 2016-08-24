@@ -47,13 +47,13 @@ Due to the limiting nature of the `log` function, larger returns are often reduc
 
 
 
+This concept can be visualized further by considering the equity curve of each of the ETFs (see `r figures.cite("time_plot_equity_curve")`). The equity curve is a generalized method of gauging the performance of a fund, by applying its returns to a benchmark over $1, and viewing its progression over time. The curve is extremely telling, and reiterates the patterns observed in the price graphs of each of the ETFs. It is clear the VFINX has performed the best, yielding a total return of approximately 70% over the course of the 5-year time horizon of the data. Similarly, it can also be observed that VEIEX performed the worse, with a negative return of nearly 25%. The volatility of returns of each of the assets can also be gauged from the equity curve, and it is a fitting precursor to the next section of this report.
+
+
 ```{r equity_curve, fig.cap = figures("time_plot_equity_curve")}
 chart.CumReturns(ret.z, col = asset.colors, legend.loc = "topleft", wealth.index = TRUE, ylab = "Wealth", xlab = "Time", main = "")
 figures.add(name = "time_plot_equity_curve", caption = "Growth of One Dollar Investment")
 ```
-
-This concept can be visualized further by considering the equity curve of each of the ETFs (see `r figures.cite("time_plot_equity_curve")`). The equity curve is a generalized method of gauging the performance of a fund, by applying its returns to a benchmark over $1, and viewing its progression over time. The curve is extremely telling, and reiterates the patterns observed in the price graphs of each of the ETFs. It is clear the VFINX has performed the best, yielding a total return of approximately 70% over the course of the 5-year time horizon of the data. Similarly, it can also be observed that VEIEX performed the worse, with a negative return of nearly 25%. The volatility of returns of each of the assets can also be gauged from the equity curve, and it is a fitting precursor to the next section of this report.
-
 
 
 ## Asset Distribution Analysis
@@ -133,6 +133,8 @@ The Bootstrap is performed using computer intensive resampling with replacement 
 
 While this method is exposed to the obvious risk of a biased sample from which it will sample data thousands of times, it has many advantages over traditional analytic assumptions of normality about data that are typically made during statistical analysis. One major benefit of quantitatively intensive statistical techniques such as the Bootstrap is that the sampled data will undoubtedly reflect the true distribution of the sample; which extends to the population if the underlying assumption about the neutrality of the original sample is correct. This, coupled with the simple implementation and high rate of repetition make this method particularly attractive for statistical analysis.
 
+\newpage
+
 ### Bootstrapped Sharpe Ratio
 
 ```{r sharpe_ratio_table}
@@ -197,7 +199,7 @@ corrplot.mixed(rho.mat, upper = "ellipse", col = colorRampPalette(c("white","cad
 figures.add(name = "asset_correlation_plot", caption = "Correlation Plot for the Cross Cross-Correlation between ETFs")
 ```
 
-To better understand and compare the relationships between each of the assets, a correlation matrix is often employed. Derived from the covariance, the correlation between two assets represents a scale-adjusted measure of correlation, which is significantly more useful when comparing the correlations of different pairs of assets. It is calculated by 'correcting' the covariance to the scale of each of the underlying distributions it is tracking, as shown below:
+To better understand and compare the relationships between each of the assets, a correlation matrix is often employed. Derived from the covariance, the correlation between two assets represents a scale-adjusted measure of correlation, which is significantly more useful when comparing the correlations of different pairs of assets. It is calculated by 'correcting' the covariance to the scale of each of the underlying distributions it is tracking, as shown below.
 
 \begin{gather*}
 	\text{corr} (X,Y) = \rho_{xy} = \frac{\text{cov} (X,Y)}{\sqrt{\text{var}(X) \times \text{var}(Y)}} = \frac{\hat{\sigma}_{xy}}{\hat{\sigma}_x \hat{\sigma}_y}
