@@ -12,9 +12,9 @@ Rolling analysis involves the computation of smaller time horizon estimates for 
 
 ## Rolling Analysis of Select ETF CER Model Parameters
 
-`r figures.cite("asset_rolling_analysis")` visualizes 24 month rolling estimated means and standard deviations of returns, along with the assumed constant mean and standard deviation of each return. These graphs provide a necesary insight into the behavior of the mean and standard deviation of each ETF over time, relative to the stationary assumed means and standard deviations, which are also displayed on the graph.
+`r figures.cite("asset_rolling_analysis")` visualizes 24 month rolling estimated means and standard deviations of returns, along with the assumed constant mean and standard deviation of each return. These graphs provide a necessary insight into the behavior of the mean and standard deviation of each ETF over time, relative to the stationary assumed means and standard deviations, which are also displayed on the graph.
 
-It is clear from the graph that in some instances, rolling assumptions of each of the parameters do not conform to the overall estimates for the mean and standard deivation. In particular, there is clear variation in the rolling standard deviation of VFINX, compared to the stationary estimate. From the graph, it is clear that the standard deviation dropped during the period of 2014-2015, which was coupled with a rise in the rolling mean. Also, analysis of the rolling VEURX mean indicates that it used to be significantly higher than the time-stationary estimation suggests, particularly during the middle of the time horizon.
+It is clear from the graph that in some instances, rolling assumptions of each of the parameters do not conform to the overall estimates for the mean and standard deviation. In particular, there is clear variation in the rolling standard deviation of VFINX, compared to the stationary estimate. From the graph, it is clear that the standard deviation dropped during the period of 2014-2015, which was coupled with a rise in the rolling mean. Also, analysis of the rolling VEURX mean indicates that it used to be significantly higher than the time-stationary estimation suggests, particularly during the middle of the time horizon.
 
 
 ```{r rolling_analyis, fig.cap = figures("asset_rolling_analysis")}
@@ -33,7 +33,7 @@ for (i in seq(1, length(asset.names))) {
 }
 ```
 
-Overall gowever, there does not appear to be any significant, systematic deviations of the rolling estimates of the standard deviation or mean from their stationary counterparts. This observation suggests that employing the stationary estimations is approapriate for portfolio calculations involving the ETFs.
+Overall however, there does not appear to be any significant, systematic deviations of the rolling estimates of the standard deviation or mean from their stationary counterparts. This observation suggests that employing the stationary estimations is appropriate for portfolio calculations involving the ETFs.
 
 ## Rolling Analysis of Correlation
 
