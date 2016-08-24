@@ -95,6 +95,8 @@ tables.cite <- function (table.ref) {
 ---
 nocite: |
     @IntroCompFinAndFinEconometrics:EricZivot:2016
+    @SourceCode:Weerawarana:2016
+    @FEMathPrimer:Stefanica:2011
 ---
 
 \newpage
