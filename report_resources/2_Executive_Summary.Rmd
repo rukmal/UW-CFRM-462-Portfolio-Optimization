@@ -4,3 +4,23 @@ output: pdf_document
 
 
 \section*{Executive Summary}
+\markboth{Executive Summary}{}
+
+
+- This report analyzes 5 years of closing price data of six securities (VFINX, VEURX, VEIEX, VBLTX, VBISX and VPACX) from July 2011 to June 2016. The securities analyzed are a collection of Exchange Traded Funds (ETFs), which track a range of diversified financial indexes (both debt and equity) from geographically diverse markets around the world.
+
+- Price analysis performed on this closing price data suggested the presence of trends that were perpetuated across all of the funds, in addition to fund-specific trends. This observation was expanded upon to identify the presence of two distinct types of risk: diversifiable and non-diversifiable.
+
+- Continuously compounded returns were calculated on a monthly basis for each asset, and were treated as samples of larger distributions. Under this assumption, descriptive univariate statistics (Constant Expected Return model parameters) were calculated for each ETF, and were analyzed to infer characteristics about the distribution of its prices. Additionally, by assuming the Gaussian form for the distributions of the prices, estimation errors were computed and analyzed to better understand the distribution of return of each ETF.
+
+- A measure of risk-adjusted return was determined (in the form of a Sharpe ratio), and was calculated to better gauge the performance of the ETFs. Intensive computer-assisted resampling methods (i.e. Bootstrap) was used to calculate standard errors of measurement and 95% confidence intervals for this measure, and the ETFs were ranked using this data.
+
+- Pairwise scatterplots, covariance and correlation matrices were used to understand interactions between each of the ETFs over the time horizon of the project. This analysis was used to reinforce the importance of diversification, and the ultimate goal of creating portfolios with these assets.
+
+- Values at Risk (VaR) was computed at the 1% and 5% risk levels for each asset, at both the monthly and annual time horizons. This data was used to add a more tangible measure of asset volatility, by relating the mean and standard deviation of returns to real dollar values. Standard estimation errors for this metric was again determined using intensive computer-assisted resampling. The VaR for for each ETF was analyzed within the scope of the precision of each of the estimators used to calculate them.
+
+- The key assumption of the Constant Expected Return (CER) is that the processes that it is modeling are covariance stationary. This hypothesis was tested by calculating and analyzing 24 month rolling estimates of the mean and standard deviation of returns for each of the ETFs. Additionally, the rolling correlation between VFINX and VBLTX was analyzed to reinforce the importance of correlation measurement in the diversification of risk.
+
+- After quick introduction to portfolio theory, global minimum variance, tangency and target return-equivalent portfolios were computed for scenarios where short sales were both allowed and disallowed. Brute-force computation was used to calculate the efficient frontiers for each of the scenarios, and these frontiers were analyzed to illustrate and emphasize the cost of not being able to short-sell assets. In addition to significant consideration and analysis of portfolio theory, descriptive statistics computed for each of the portfolios were used to reinforce the comparisons and conclusions drawn from the behavior of the different portfolios.
+
+- Employing the observations and inferences made in calculating the sample portfolios, portfolios that may be employed in 401(k) plans were considered. After conducting this exercise, the importance of good underlying assets, and the impact of the restriction of short sales on portfolio construction were emphasized as determining factors when constructing good 401(k) portfolios. These observations and other final remarks concluded the project.
