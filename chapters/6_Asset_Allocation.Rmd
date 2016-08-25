@@ -17,14 +17,14 @@ However, recalling the properties of portfolios that do not allow short sales, a
 The 6% target annual expected return portfolio similarly to how the VFINX return equivalent portfolio was constructed in the previous section. However, as this portfolio is intended to be 401(k) compliant, we must add an extra constraint, to reflect the fact that short sales are not allowed (i.e. all asset weights must be positive).
 
 \begin{gather*}
-	\min_{\mathbf{x}} \sigma_p = \mathbf{x}^\intercal \times \boldsymbol{\Sigma} \times \mathbf{x} \\
+	\min_{\mathbf{x}} \sigma_p^2 = \mathbf{x}^\intercal \times \boldsymbol{\Sigma} \times \mathbf{x} \\
 	\text{subject to } \mathbf{x}^\intercal \cdot \mathbf{1} = 1 \\
 	\boldsymbol{\mu} \cdot \mathbf{x} = 0.005 \\
 	\mathbf{x_i} > 0 , \,\, \forall \, i
 \end{gather*}
 
 
-`r figures.cite("port_long_target6_weights")` illustrates the asset weights that comprise an efficient portfolio that would deliver an annual expected return of 6%. Note that the assets that had the highest variablility, and lowest Sharpe ratios are excluded from the portfolio, while the assets that had the best risk-return tradeoffs are invested in heavily.
+`r figures.cite("port_long_target6_weights")` illustrates the asset weights that comprise an efficient portfolio that would deliver an annual expected return of 6%. Note that the assets that had the highest variability, and lowest Sharpe ratios are excluded from the portfolio, while the assets that had the best risk-return tradeoffs are invested in heavily.
 
 ```{r port_long_target6_weights, fig.cap = figures("port_long_target6_weights")}
 figures.add(name = "port_long_target6_weights", caption = "Asset Weights of an Efficient Portfolio with a Target Annual Expected Return of 6% not allowing Short Sales")

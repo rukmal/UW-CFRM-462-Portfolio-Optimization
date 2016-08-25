@@ -23,10 +23,10 @@ By using the definitions for portfolio characteristics above, portfolios can be 
 
 ### Global Minimum Variance Portfolio
 
-The notion of a minimum variance portfolio is derived from the notion that all of the assets have risks associated with them, and thus the possibility of constructing a portfolio that may yield a level of risk lower than that of any single asset is particularly attractive. This type of portfolio can be constructed by determining the asset weights that would minimize the value of the variance of the portfolio, $\sigma_p$. This problem is described mathematically below:
+The notion of a minimum variance portfolio is derived from the notion that all of the assets have risks associated with them, and thus the possibility of constructing a portfolio that may yield a level of risk lower than that of any single asset is particularly attractive. This type of portfolio can be constructed by determining the asset weights that would minimize the value of the variance of the portfolio, $\sigma_p^2$. This problem is described mathematically below:
 
 \begin{gather*}
-	\min_{\mathbf{x}} \sigma_p = \mathbf{x}^\intercal \times \boldsymbol{\Sigma} \times \mathbf{x} \\
+	\min_{\mathbf{x}} \sigma_p^2 = \mathbf{x}^\intercal \times \boldsymbol{\Sigma} \times \mathbf{x} \\
 	\text{subject to } \mathbf{x}^\intercal \cdot \mathbf{1} = 1
 \end{gather*}
 
@@ -55,7 +55,7 @@ Furthermore, the VaR of this portfolio clearly quantifies the benefit that can b
 An efficient portfolio is defined as a portfolio that can deliver the highest expected return, at a given level of risk. Inverting this statement, it also means that it is any portfolio that provides a target return at the lowest possible risk. To illustrate this, we will calculate an efficient portfolio that has an expected return equal to highest return out of the ETFs, VFINX. The constrained optimization can thus be set up as follows:
 
 \begin{gather*}
-	\min_{\mathbf{x}} \sigma_p = \mathbf{x}^\intercal \times \boldsymbol{\Sigma} \times \mathbf{x} \\
+	\min_{\mathbf{x}} \sigma_p^2 = \mathbf{x}^\intercal \times \boldsymbol{\Sigma} \times \mathbf{x} \\
 	\text{subject to } \mathbf{x}^\intercal \cdot \mathbf{1} = 1 \\
 	\boldsymbol{\mu} \cdot \mathbf{x} = E[\text{VFINX}] = `r asset.univar.stats$mean[1]`
 \end{gather*}
@@ -131,7 +131,7 @@ This is why the portfolios above have negative weights. The negative weight repr
 Similar to the portfolio computed above, an optimal portfolio that does not allow the short sale of assets can be constructed. The only difference this time would be that an additional constraint will have to be imposed, restricting the weights of the assets to be greater than 0. This constrained optimization is described below:
 
 \begin{gather*}
-	\min_{\mathbf{x}} \sigma_p = \mathbf{x}^\intercal \times \boldsymbol{\Sigma} \times \mathbf{x} \\
+	\min_{\mathbf{x}} \sigma_p^2 = \mathbf{x}^\intercal \times \boldsymbol{\Sigma} \times \mathbf{x} \\
 	\text{subject to } \mathbf{x}^\intercal \cdot \mathbf{1} = 1 \\
 	\mathbf{x_i} > 0 , \,\, \forall \, i
 \end{gather*}
