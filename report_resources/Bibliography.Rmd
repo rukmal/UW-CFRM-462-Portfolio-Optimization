@@ -1,7 +1,0 @@
----
-output: pdf_document
----
-
-\section{References}
-
-\bibliography{"bibliography.bib"}

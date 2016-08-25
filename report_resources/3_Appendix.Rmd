@@ -3,6 +3,16 @@ output: pdf_document
 ---
 
 \appendix
+\renewcommand\chaptername{Appendix}
+\fancypagestyle{plain}{
+    \fancyhead[RE,LO]{\chaptername \  \thechapter}
+}
+
+\fancypagestyle{appendix}{
+	\fancyhead[RE,LO]{\chaptername \  \thechapter}
+}
+
+\pagestyle{appendix}
 
 # Four Plot Summaries of the ETF CC Returns
 

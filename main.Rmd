@@ -101,6 +101,10 @@ nocite: |
 
 \newpage
 
+\pagestyle{fancy}
+
+\fancyhead[RE,LO]{\nouppercase{\leftmark}}
+
 \sloppy
 \addcontentsline{toc}{chapter}{References}
 \section*{References}
